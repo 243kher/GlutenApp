@@ -1,0 +1,1286 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: GlutenFree Map API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication and user management
+  - name: establishments
+    description: Gluten-free establishments (restaurants, bakeries, etc.)
+  - name: reviews
+    description: Reviews and ratings
+  - name: products
+    description: Gluten-free products
+  - name: admin
+    description: Admin moderation
+  - name: stats
+    description: Statistics and aggregates
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # Auth
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateMe
+      tags: [auth]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Establishments
+  /establishments:
+    get:
+      operationId: listEstablishments
+      tags: [establishments]
+      summary: List / search establishments
+      parameters:
+        - name: lat
+          in: query
+          schema:
+            type: ["number", "null"]
+        - name: lng
+          in: query
+          schema:
+            type: ["number", "null"]
+        - name: radius
+          in: query
+          description: Radius in km
+          schema:
+            type: ["number", "null"]
+        - name: type
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [restaurant, bakery, grocery, cafe, other, null]
+        - name: verificationLevel
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [unverified, community, certified, null]
+        - name: safeCeliac
+          in: query
+          schema:
+            type: ["boolean", "null"]
+        - name: search
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of establishments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstablishmentListResponse"
+
+    post:
+      operationId: createEstablishment
+      tags: [establishments]
+      summary: Create a new establishment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEstablishmentBody"
+      responses:
+        "201":
+          description: Created establishment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Establishment"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /establishments/{id}:
+    get:
+      operationId: getEstablishment
+      tags: [establishments]
+      summary: Get establishment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Establishment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstablishmentDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateEstablishment
+      tags: [establishments]
+      summary: Update establishment (owner or admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEstablishmentBody"
+      responses:
+        "200":
+          description: Updated establishment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Establishment"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /establishments/{id}/verify:
+    post:
+      operationId: verifyEstablishment
+      tags: [establishments]
+      summary: Community-verify an establishment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Verification recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /establishments/{id}/certify:
+    post:
+      operationId: certifyEstablishment
+      tags: [establishments]
+      summary: Owner or admin certifies an establishment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CertifyEstablishmentBody"
+      responses:
+        "200":
+          description: Certified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /establishments/{id}/favorite:
+    post:
+      operationId: toggleFavoriteEstablishment
+      tags: [establishments]
+      summary: Toggle favorite status for current user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Favorite toggled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoriteResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /establishments/{id}/report:
+    post:
+      operationId: reportEstablishment
+      tags: [establishments]
+      summary: Report an error or cross-contamination issue
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportBody"
+      responses:
+        "201":
+          description: Report submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Reviews
+  /establishments/{id}/reviews:
+    get:
+      operationId: listReviews
+      tags: [reviews]
+      summary: List reviews for an establishment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewListResponse"
+
+    post:
+      operationId: createReview
+      tags: [reviews]
+      summary: Submit a review for an establishment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReviewBody"
+      responses:
+        "201":
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /reviews/{id}:
+    patch:
+      operationId: updateReview
+      tags: [reviews]
+      summary: Update own review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReviewBody"
+      responses:
+        "200":
+          description: Updated review
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: deleteReview
+      tags: [reviews]
+      summary: Delete own review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Products
+  /products:
+    get:
+      operationId: listProducts
+      tags: [products]
+      summary: Search gluten-free products
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+
+    post:
+      operationId: createProduct
+      tags: [products]
+      summary: Add a gluten-free product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductBody"
+      responses:
+        "201":
+          description: Created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /products/{id}:
+    get:
+      operationId: getProduct
+      tags: [products]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Stats (wow endpoints)
+  /stats:
+    get:
+      operationId: getPlatformStats
+      tags: [stats]
+      summary: Get overall platform statistics
+      responses:
+        "200":
+          description: Platform stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformStats"
+
+  /stats/recent:
+    get:
+      operationId: getRecentActivity
+      tags: [stats]
+      summary: Get recently added or updated establishments
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Establishment"
+
+  # Admin
+  /admin/reports:
+    get:
+      operationId: listReports
+      tags: [admin]
+      summary: List all reports (admin only)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [pending, resolved, null]
+      responses:
+        "200":
+          description: Reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/reports/{id}:
+    patch:
+      operationId: resolveReport
+      tags: [admin]
+      summary: Resolve a report (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResolveReportBody"
+      responses:
+        "200":
+          description: Resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/establishments/{id}/moderate:
+    patch:
+      operationId: moderateEstablishment
+      tags: [admin]
+      summary: Admin moderates an establishment (verify, certify, or remove)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModerateEstablishmentBody"
+      responses:
+        "200":
+          description: Moderation applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: ["string", "null"]
+      required:
+        - success
+
+    # Auth
+    RegisterBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [user, owner]
+      required:
+        - name
+        - email
+        - password
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+      required:
+        - user
+        - token
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [user, owner, admin]
+        avatarUrl:
+          type: ["string", "null"]
+        dietaryPreferences:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - role
+        - createdAt
+
+    UpdateMeBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+        dietaryPreferences:
+          type: ["string", "null"]
+
+    # Establishments
+    Establishment:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [restaurant, bakery, grocery, cafe, other]
+        address:
+          type: string
+        city:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        verificationLevel:
+          type: string
+          enum: [unverified, community, certified]
+        safeCeliac:
+          type: boolean
+        phone:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        hours:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        photoUrl:
+          type: ["string", "null"]
+        averageRating:
+          type: ["number", "null"]
+        reviewCount:
+          type: integer
+        verificationCount:
+          type: integer
+        distance:
+          type: ["number", "null"]
+        ownerId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - type
+        - address
+        - city
+        - lat
+        - lng
+        - verificationLevel
+        - safeCeliac
+        - reviewCount
+        - verificationCount
+        - createdAt
+        - updatedAt
+
+    EstablishmentDetail:
+      allOf:
+        - $ref: "#/components/schemas/Establishment"
+        - type: object
+          properties:
+            glutenFreeMenu:
+              type: ["string", "null"]
+            isFavorited:
+              type: boolean
+
+    EstablishmentListResponse:
+      type: object
+      properties:
+        establishments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Establishment"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - establishments
+        - total
+        - page
+        - limit
+
+    CreateEstablishmentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [restaurant, bakery, grocery, cafe, other]
+        address:
+          type: string
+        city:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        safeCeliac:
+          type: boolean
+        phone:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        hours:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        photoUrl:
+          type: ["string", "null"]
+        glutenFreeMenu:
+          type: ["string", "null"]
+      required:
+        - name
+        - type
+        - address
+        - city
+        - lat
+        - lng
+
+    UpdateEstablishmentBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        hours:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        photoUrl:
+          type: ["string", "null"]
+        glutenFreeMenu:
+          type: ["string", "null"]
+        safeCeliac:
+          type: ["boolean", "null"]
+
+    CertifyEstablishmentBody:
+      type: object
+      properties:
+        certificationNote:
+          type: ["string", "null"]
+
+    FavoriteResponse:
+      type: object
+      properties:
+        isFavorited:
+          type: boolean
+      required:
+        - isFavorited
+
+    ReportBody:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [cross_contamination, wrong_info, closed, other]
+        description:
+          type: string
+      required:
+        - type
+        - description
+
+    # Reviews
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        establishmentId:
+          type: integer
+        userId:
+          type: integer
+        userName:
+          type: string
+        userAvatarUrl:
+          type: ["string", "null"]
+        rating:
+          type: integer
+        comment:
+          type: ["string", "null"]
+        crossContaminationAlert:
+          type: boolean
+        photoUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - establishmentId
+        - userId
+        - userName
+        - rating
+        - crossContaminationAlert
+        - createdAt
+
+    ReviewListResponse:
+      type: object
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - reviews
+        - total
+        - page
+        - limit
+
+    CreateReviewBody:
+      type: object
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: ["string", "null"]
+        crossContaminationAlert:
+          type: boolean
+        photoUrl:
+          type: ["string", "null"]
+      required:
+        - rating
+
+    UpdateReviewBody:
+      type: object
+      properties:
+        rating:
+          type: ["integer", "null"]
+          minimum: 1
+          maximum: 5
+        comment:
+          type: ["string", "null"]
+        crossContaminationAlert:
+          type: ["boolean", "null"]
+        photoUrl:
+          type: ["string", "null"]
+
+    # Products
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        brand:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        barcode:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        isVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - isVerified
+        - createdAt
+
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - products
+        - total
+        - page
+        - limit
+
+    CreateProductBody:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        barcode:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+      required:
+        - name
+
+    # Stats
+    PlatformStats:
+      type: object
+      properties:
+        totalEstablishments:
+          type: integer
+        verifiedCount:
+          type: integer
+        certifiedCount:
+          type: integer
+        safeCeliacCount:
+          type: integer
+        totalReviews:
+          type: integer
+        totalUsers:
+          type: integer
+        byType:
+          type: array
+          items:
+            $ref: "#/components/schemas/TypeCount"
+      required:
+        - totalEstablishments
+        - verifiedCount
+        - certifiedCount
+        - safeCeliacCount
+        - totalReviews
+        - totalUsers
+        - byType
+
+    TypeCount:
+      type: object
+      properties:
+        type:
+          type: string
+        count:
+          type: integer
+      required:
+        - type
+        - count
+
+    # Admin
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+        establishmentId:
+          type: integer
+        establishmentName:
+          type: string
+        userId:
+          type: integer
+        userName:
+          type: string
+        type:
+          type: string
+          enum: [cross_contamination, wrong_info, closed, other]
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, resolved]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - establishmentId
+        - establishmentName
+        - userId
+        - userName
+        - type
+        - description
+        - status
+        - createdAt
+
+    ResolveReportBody:
+      type: object
+      properties:
+        resolution:
+          type: ["string", "null"]
+
+    ModerateEstablishmentBody:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [verify, certify, remove]
+        note:
+          type: ["string", "null"]
+      required:
+        - action
