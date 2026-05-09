@@ -56,7 +56,6 @@ function AppLayout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
           <p className="font-semibold text-foreground mb-1">GlutenApp</p>
           <p>Trouvez les meilleurs établissements sans gluten près de chez vous.</p>
-          <p className="mt-3 text-xs">© 2026 GlutenApp. Tous droits réservés.</p>
         </div>
       </footer>
     </div>

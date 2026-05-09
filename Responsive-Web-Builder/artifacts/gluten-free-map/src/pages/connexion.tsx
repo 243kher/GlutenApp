@@ -50,7 +50,7 @@ export default function ConnexionPage() {
             <Leaf className="w-7 h-7 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Se connecter</h1>
-          <p className="text-muted-foreground mt-1">Accédez à votre espace Sans Gluten Partout</p>
+          <p className="text-muted-foreground mt-1">Accédez à votre espace GlutenSpot</p>
         </div>
 
         <div className="bg-card border border-card-border rounded-2xl p-6 shadow-sm">

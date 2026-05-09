@@ -29,7 +29,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg text-primary hover:opacity-80 transition-opacity">
             <Leaf className="w-6 h-6" />
-            <span className="hidden sm:block">Sans Gluten Partout</span>
+            <span className="hidden sm:block">Gluten Spot</span>
             <span className="sm:hidden">SGP</span>
           </Link>
 
