@@ -1,3 +1,7 @@
+/**
+ * Express application setup for the Gluten-Free Map API server.
+ * Handles API routes, authentication, and serves the React frontend.
+ */
 import express, { type Express, type Request, type Response } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";

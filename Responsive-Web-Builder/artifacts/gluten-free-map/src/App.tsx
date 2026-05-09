@@ -1,3 +1,7 @@
+/**
+ * Main application component for the Gluten-Free Map.
+ * This app allows users to find and review gluten-free establishments and products.
+ */
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
