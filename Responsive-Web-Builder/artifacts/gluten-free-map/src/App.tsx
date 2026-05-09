@@ -47,9 +47,18 @@ function Router() {
 
 function AppLayout() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      <Router />
+      <main className="flex-1">
+        <Router />
+      </main>
+      <footer className="border-t border-border py-6 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
+          <p className="font-semibold text-foreground mb-1">GlutenApp</p>
+          <p>Trouvez les meilleurs établissements sans gluten près de chez vous.</p>
+          <p className="mt-3 text-xs">© 2026 GlutenApp. Tous droits réservés.</p>
+        </div>
+      </footer>
     </div>
   );
 }

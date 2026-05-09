@@ -468,12 +468,43 @@ export default function HomePage() {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="bg-card border border-border rounded-xl p-2.5 shadow-md"
+            className={`border rounded-xl p-2.5 shadow-md transition-colors ${showFilters ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
             data-testid="button-mobile-filters"
           >
-            <SlidersHorizontal className="w-5 h-5 text-foreground" />
+            <SlidersHorizontal className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Mobile filter panel */}
+        {showFilters && (
+          <div className="md:hidden absolute top-20 left-4 right-4 z-[900] bg-card border border-border rounded-2xl shadow-xl p-4 space-y-3">
+            <div className="flex flex-wrap gap-1.5">
+              {typeOptions.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setType(opt.value)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                    type === opt.value ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-accent"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Switch checked={safeCeliac} onCheckedChange={setSafeCeliac} id="safe-map-mobile" />
+                <Label htmlFor="safe-map-mobile" className="text-xs text-orange-700 dark:text-orange-300 cursor-pointer font-medium">Safe coeliaque</Label>
+              </div>
+              <button
+                onClick={() => setVerificationLevel(v => v === "certified" ? "" : "certified")}
+                className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${verificationLevel === "certified" ? "bg-green-100 text-green-700 border-green-300 dark:bg-green-950 dark:text-green-300 dark:border-green-700" : "border-border hover:bg-accent"}`}
+              >
+                Certifié
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
