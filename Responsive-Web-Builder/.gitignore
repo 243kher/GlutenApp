@@ -37,6 +37,10 @@ yarn-error.log
 testem.log
 /typings
 
+# Lock files from other package managers (this project uses pnpm)
+package-lock.json
+yarn.lock
+
 # System Files
 .DS_Store
 Thumbs.db

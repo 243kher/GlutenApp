@@ -1,8 +1,12 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request, type Response } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
+import path from "path";
+import { fileURLToPath } from "url";
 import router from "./routes";
 import { logger } from "./lib/logger";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app: Express = express();
 
@@ -30,5 +34,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+// Serve the React frontend build
+const frontendPath = path.resolve(__dirname, "../../gluten-free-map/dist/public");
+app.use(express.static(frontendPath));
+
+// SPA fallback: serve index.html for all non-API routes
+app.use((_req: Request, res: Response) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
 
 export default app;
