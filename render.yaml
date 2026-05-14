@@ -3,8 +3,8 @@ services:
     name: glutenapp
     runtime: node
     rootDir: Responsive-Web-Builder
-    buildCommand: npm install -g pnpm && pnpm install && pnpm --filter @workspace/gluten-free-map run build && pnpm --filter @workspace/api-server run build
-    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+    buildCommand: corepack enable && corepack prepare pnpm@9.15.0 --activate && pnpm install --no-frozen-lockfile && pnpm --filter @workspace/gluten-free-map run build && pnpm --filter @workspace/api-server run build
+    startCommand: corepack enable && node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/healthz
     envVars:
       - key: NODE_ENV
