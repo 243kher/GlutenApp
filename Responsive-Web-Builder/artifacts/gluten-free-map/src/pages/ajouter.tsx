@@ -39,11 +39,11 @@ const PARIS_LAT = 48.8566;
 const PARIS_LNG = 2.3522;
 
 const typeOptions = [
-  { value: "restaurant", label: "Restaurant", emoji: "🍽️" },
-  { value: "bakery", label: "Boulangerie", emoji: "🥖" },
-  { value: "grocery", label: "Épicerie", emoji: "🛒" },
-  { value: "cafe", label: "Café", emoji: "☕" },
-  { value: "other", label: "Autre", emoji: "📍" },
+  { value: "restaurant", label: "Restaurant" },
+  { value: "bakery", label: "Boulangerie"},
+  { value: "grocery", label: "Épicerie" },
+  { value: "cafe", label: "Café"},
+  { value: "other", label: "Autre"},
 ];
 
 const typeLabels: Record<string, string> = Object.fromEntries(
@@ -220,7 +220,6 @@ export default function AjouterPage() {
                 </FormItem>
               )} />
 
-              {/* Type — grille de boutons emoji au lieu du select */}
               <FormField control={form.control} name="type" render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
@@ -242,7 +241,6 @@ export default function AjouterPage() {
                           {active && (
                             <span className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl shadow-md shadow-primary/30" />
                           )}
-                          <span className="relative text-2xl">{opt.emoji}</span>
                           <span className="relative text-xs font-medium leading-tight text-center">{opt.label}</span>
                         </button>
                       );
@@ -450,7 +448,6 @@ export default function AjouterPage() {
                   label="Type"
                   value={
                     <span className="inline-flex items-center gap-1.5">
-                      <span>{typeOptions.find(t => t.value === form.getValues("type"))?.emoji}</span>
                       {typeLabels[form.getValues("type")]}
                     </span>
                   }

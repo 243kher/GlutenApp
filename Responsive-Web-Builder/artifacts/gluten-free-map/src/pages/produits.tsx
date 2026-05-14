@@ -133,9 +133,9 @@ export default function ProduitsPage() {
             );
           })}
         </div>
-
+{/* 
         <div className="flex items-center justify-between flex-wrap gap-3">
-          {/* Toggle "Vérifiés uniquement" */}
+          {/* Toggle "Vérifiés uniquement" 
           <div className="inline-flex items-center gap-2.5 px-3 py-2 rounded-full bg-card/50 backdrop-blur border border-border/50">
             <Switch
               checked={verifiedOnly}
@@ -149,7 +149,7 @@ export default function ProduitsPage() {
             </Label>
           </div>
 
-          {/* Reset si filtres actifs */}
+          {/* Reset si filtres actifs 
           {activeFilterCount > 0 && (
             <button
               onClick={resetFilters}
@@ -158,7 +158,7 @@ export default function ProduitsPage() {
               Effacer les filtres
             </button>
           )}
-        </div>
+        </div>*/}
       </div>
 
       {/* ========================================================

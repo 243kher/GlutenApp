@@ -359,3 +359,69 @@
     inset: -1px;
   }
 }
+
+/* ============================================================
+   HIÉRARCHIE Z-INDEX GLOBALE
+   ------------------------------------------------------------
+   Leaflet utilise jusqu'à 800 pour ses contrôles. Tout ce qui
+   est UI de l'app doit passer au-dessus.
+   
+   Échelle :
+     0-99    : contenu de page normal
+     100-199 : éléments sticky/flottants dans la page
+     400-800 : RÉSERVÉ à Leaflet (ne pas toucher)
+     1000+   : panels au-dessus de la carte
+     1100+   : top nav + bottom nav (sticky)
+     1200+   : modals / dialogs / sheets
+     1300+   : dropdowns (doivent passer au-dessus de tout)
+     1400+   : toasts (au-dessus de tout, même des dropdowns)
+   ============================================================ */
+
+/* Top nav sticky + bottom nav mobile */
+nav.sticky, nav.fixed {
+  z-index: 1100;
+}
+
+/* Radix UI — toutes les surfaces flottantes (dropdown, popover, select, tooltip) */
+[data-radix-popper-content-wrapper] {
+  z-index: 1300 !important;
+}
+
+/* Radix Dialog (overlay + content) */
+[data-radix-dialog-overlay],
+[data-radix-dialog-content] {
+  z-index: 1200 !important;
+}
+
+/* Radix Toast — au-dessus de tout */
+[data-radix-toast-viewport] {
+  z-index: 1400 !important;
+}
+
+/* Forcer Leaflet à rester dans sa fourchette même s'il essaie de monter */
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 800 !important;
+}
+.leaflet-popup-pane { z-index: 700 !important; }
+.leaflet-tooltip-pane { z-index: 650 !important; }
+.leaflet-marker-pane { z-index: 600 !important; }
+.leaflet-overlay-pane { z-index: 400 !important; }
+.leaflet-tile-pane { z-index: 200 !important; }
+
+/* Popups Leaflet — souvent ils ont l'air écrasés visuellement */
+.leaflet-popup-content-wrapper {
+  border-radius: 1rem !important;
+  backdrop-filter: blur(12px);
+  background: hsl(var(--card) / 0.95) !important;
+  color: hsl(var(--foreground)) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid hsl(var(--border) / 0.5) !important;
+}
+.leaflet-popup-tip {
+  background: hsl(var(--card)) !important;
+}
+.leaflet-container a {
+  color: hsl(var(--primary)) !important;
+}

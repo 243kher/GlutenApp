@@ -214,7 +214,7 @@ function FiltersContent({
 function FiltersModal({ open, onClose, resultsCount, onReset, ...rest }: any) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[1100] md:hidden bg-background animate-in slide-in-from-bottom duration-300">
+    <div className="fixed inset-0 z-[1200] md:hidden bg-background animate-in slide-in-from-bottom duration-300">
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/85 border-b border-border/40">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         <div className="flex items-center gap-3 px-4 h-16">
