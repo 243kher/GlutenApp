@@ -10,22 +10,21 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 // ============================================================
-// Configuration des catégories — couleurs + emojis
+// Configuration des catégories — couleurs 
 // ============================================================
-const categoryConfig: Record<string, { gradient: string; emoji: string; ring: string }> = {
-  "Pain":     { gradient: "from-amber-400/20 to-amber-500/5",   emoji: "🥖", ring: "ring-amber-400/30" },
-  "Pâtes":    { gradient: "from-yellow-400/20 to-yellow-500/5", emoji: "🍝", ring: "ring-yellow-400/30" },
-  "Farine":   { gradient: "from-orange-400/20 to-orange-500/5", emoji: "🌾", ring: "ring-orange-400/30" },
-  "Céréales": { gradient: "from-lime-400/20 to-lime-500/5",     emoji: "🥣", ring: "ring-lime-400/30" },
-  "Biscuits": { gradient: "from-rose-400/20 to-rose-500/5",     emoji: "🍪", ring: "ring-rose-400/30" },
-  "Levure":   { gradient: "from-purple-400/20 to-purple-500/5", emoji: "🧪", ring: "ring-purple-400/30" },
-  "Sauce":    { gradient: "from-teal-400/20 to-teal-500/5",     emoji: "🥫", ring: "ring-teal-400/30" },
-  "Pizza":    { gradient: "from-red-400/20 to-red-500/5",       emoji: "🍕", ring: "ring-red-400/30" },
+const categoryConfig: Record<string, { gradient: string; ring: string }> = {
+  "Pain":     { gradient: "from-amber-400/20 to-amber-500/5",  ring: "ring-amber-400/30" },
+  "Pâtes":    { gradient: "from-yellow-400/20 to-yellow-500/5", ring: "ring-yellow-400/30" },
+  "Farine":   { gradient: "from-orange-400/20 to-orange-500/5", ring: "ring-orange-400/30" },
+  "Céréales": { gradient: "from-lime-400/20 to-lime-500/5",      ring: "ring-lime-400/30" },
+  "Biscuits": { gradient: "from-rose-400/20 to-rose-500/5",     ring: "ring-rose-400/30" },
+  "Levure":   { gradient: "from-purple-400/20 to-purple-500/5", ring: "ring-purple-400/30" },
+  "Sauce":    { gradient: "from-teal-400/20 to-teal-500/5",   ring: "ring-teal-400/30" },
+  "Pizza":    { gradient: "from-red-400/20 to-red-500/5",       ring: "ring-red-400/30" },
 };
 
 const fallbackCategory = {
   gradient: "from-muted/40 to-muted/10",
-  emoji: "📦",
   ring: "ring-border",
 };
 
@@ -126,7 +125,6 @@ export default function ProduitsPage() {
               <CategoryChip
                 key={cat}
                 label={cat}
-                emoji={cfg.emoji}
                 active={category === cat}
                 onClick={() => { setCategory(cat === category ? "" : cat); setPage(1); }}
               />
@@ -225,11 +223,11 @@ export default function ProduitsPage() {
 }
 
 // ============================================================
-// Chip de filtre par catégorie — pilule avec emoji + label
+// Chip de filtre par catégorie — pilule avec label
 // ============================================================
 function CategoryChip({
-  label, emoji, active, onClick,
-}: { label: string; emoji?: string; active: boolean; onClick: () => void }) {
+  label, active, onClick,
+}: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
@@ -243,7 +241,6 @@ function CategoryChip({
         <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 rounded-full shadow-md shadow-primary/30" />
       )}
       <span className="relative flex items-center gap-1.5">
-        {emoji && <span className="text-base leading-none">{emoji}</span>}
         {label}
       </span>
     </button>
@@ -266,10 +263,7 @@ function ProductCard({ product }: { product: any }) {
 
       {/* === Image / placeholder avec fond dégradé selon catégorie === */}
       <div className={`relative h-32 sm:h-36 bg-gradient-to-br ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
-        {/* Décoration : grand emoji flou en arrière-plan */}
-        <div className="absolute inset-0 flex items-center justify-center text-7xl opacity-10 blur-sm">
-          {cfg.emoji}
-        </div>
+
 
         {product.imageUrl ? (
           <img
@@ -279,7 +273,6 @@ function ProductCard({ product }: { product: any }) {
           />
         ) : (
           <span className="relative text-5xl drop-shadow-sm group-hover:scale-110 transition-transform duration-500">
-            {cfg.emoji}
           </span>
         )}
 
@@ -306,7 +299,6 @@ function ProductCard({ product }: { product: any }) {
 
         {product.category && (
           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/60 backdrop-blur border border-border/40 text-[11px] font-medium text-foreground/80">
-            <span>{cfg.emoji}</span>
             {product.category}
           </div>
         )}

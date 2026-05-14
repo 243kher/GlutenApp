@@ -47,7 +47,7 @@ export default function Navbar() {
                 Gluten Spot
               </span>
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent sm:hidden">
-                SGP
+                GS
               </span>
             </Link>
 

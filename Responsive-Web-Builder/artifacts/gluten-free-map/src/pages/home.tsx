@@ -1,19 +1,45 @@
 import { useState, useRef, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  Circle,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
-  Search, Navigation, X, MapPin, ChevronRight, Loader2,
-  AlertCircle, ArrowLeft, SlidersHorizontal, Sparkles,
-  Store, Wheat, ShoppingCart, Coffee, MoreHorizontal,
-  ShieldCheck, Filter, Check,
+  Search,
+  Navigation,
+  X,
+  MapPin,
+  ChevronRight,
+  Loader2,
+  AlertCircle,
+  ArrowLeft,
+  SlidersHorizontal,
+  Sparkles,
+  Store,
+  Wheat,
+  ShoppingCart,
+  Coffee,
+  MoreHorizontal,
+  ShieldCheck,
+  Filter,
+  Check,
 } from "lucide-react";
 import { Link } from "wouter";
 import {
-  useListEstablishments, getListEstablishmentsQueryKey,
-  useGetPlatformStats, getGetPlatformStatsQueryKey,
+  useListEstablishments,
+  getListEstablishmentsQueryKey,
+  useGetPlatformStats,
+  getGetPlatformStatsQueryKey,
 } from "@workspace/api-client-react";
-import { VerificationBadge, SafeCeliacBadge } from "@/components/VerificationBadge";
+import {
+  VerificationBadge,
+  SafeCeliacBadge,
+} from "@/components/VerificationBadge";
 import { StarRating } from "@/components/StarRating";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,27 +47,40 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Popover, PopoverContent, PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { useGeolocation } from "@/hooks/useGeolocation";
 
 // === Icônes Leaflet ===
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
 const verificationColors: Record<string, string> = {
-  certified: "#16a34a", community: "#2563eb", unverified: "#9ca3af",
+  certified: "#16a34a",
+  community: "#2563eb",
+  unverified: "#9ca3af",
 };
 
 const typeColorsBg: Record<string, string> = {
-  restaurant: "#f97316", bakery: "#eab308", grocery: "#22c55e", cafe: "#a78bfa", other: "#6b7280",
+  restaurant: "#f97316",
+  bakery: "#eab308",
+  grocery: "#22c55e",
+  cafe: "#a78bfa",
+  other: "#6b7280",
 };
 const typeLabels: Record<string, string> = {
-  restaurant: "Restaurant", bakery: "Boulangerie", grocery: "Épicerie", cafe: "Café", other: "Autre",
+  restaurant: "Restaurant",
+  bakery: "Boulangerie",
+  grocery: "Épicerie",
+  cafe: "Café",
+  other: "Autre",
 };
 
 // === Liste enrichie des types : chaque catégorie a une icône Lucide + un label ===
@@ -56,9 +95,14 @@ const typeFilters = [
 // Même liste mais en version compacte pour le mobile (modal)
 const typeOptions = typeFilters.map(({ value, label }) => ({ value, label }));
 
-function createMarker(type: string, verificationLevel: string, isSelected = false) {
+function createMarker(
+  type: string,
+  verificationLevel: string,
+  isSelected = false,
+) {
   const bgColor = typeColorsBg[type] ?? typeColorsBg.other;
-  const borderColor = verificationColors[verificationLevel] ?? verificationColors.unverified;
+  const borderColor =
+    verificationColors[verificationLevel] ?? verificationColors.unverified;
   const size = isSelected ? 44 : 34;
   const borderW = isSelected ? 3 : 2;
   const fontSize = isSelected ? 17 : 14;
@@ -94,8 +138,16 @@ function MapController({ lat, lng }: { lat: number; lng: number }) {
 // ============================================================
 // LocateButton — flottant en bas à droite de la carte
 // ============================================================
-function LocateButton({ onLocate, isLocating, isActive, onReset }: {
-  onLocate: () => void; isLocating: boolean; isActive: boolean; onReset: () => void;
+function LocateButton({
+  onLocate,
+  isLocating,
+  isActive,
+  onReset,
+}: {
+  onLocate: () => void;
+  isLocating: boolean;
+  isActive: boolean;
+  onReset: () => void;
 }) {
   return (
     <button
@@ -108,11 +160,19 @@ function LocateButton({ onLocate, isLocating, isActive, onReset }: {
       }`}
       data-testid="button-locate"
     >
-      {isLocating
-        ? <Loader2 className="w-4 h-4 animate-spin" />
-        : <Navigation className={`w-4 h-4 ${isActive ? "fill-primary-foreground" : ""}`} />}
+      {isLocating ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Navigation
+          className={`w-4 h-4 ${isActive ? "fill-primary-foreground" : ""}`}
+        />
+      )}
       <span className="hidden sm:block">
-        {isLocating ? "Localisation..." : isActive ? "Près de moi" : "Me localiser"}
+        {isLocating
+          ? "Localisation..."
+          : isActive
+            ? "Près de moi"
+            : "Me localiser"}
       </span>
     </button>
   );
@@ -123,20 +183,32 @@ function LocateButton({ onLocate, isLocating, isActive, onReset }: {
 // ============================================================
 type SnapPoint = "peek" | "half" | "full";
 function DraggableBottomSheet({
-  open, onClose, children, peekHeight = 160,
-}: { open: boolean; onClose: () => void; children: React.ReactNode; peekHeight?: number; }) {
+  open,
+  onClose,
+  children,
+  peekHeight = 160,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  peekHeight?: number;
+}) {
   const [snap, setSnap] = useState<SnapPoint>("peek");
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
-  const [vh, setVh] = useState(typeof window !== "undefined" ? window.innerHeight : 800);
+  const [vh, setVh] = useState(
+    typeof window !== "undefined" ? window.innerHeight : 800,
+  );
 
   useEffect(() => {
     const onResize = () => setVh(window.innerHeight);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-  useEffect(() => { if (open) setSnap("peek"); }, [open]);
+  useEffect(() => {
+    if (open) setSnap("peek");
+  }, [open]);
 
   const sheetHeight = vh * 0.88;
   const offsets: Record<SnapPoint, number> = {
@@ -158,9 +230,15 @@ function DraggableBottomSheet({
   const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging) return;
     setIsDragging(false);
-    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
     const finalOffset = offsets[snap] + dragDelta;
-    if (finalOffset > offsets.peek + 70) { onClose(); setDragDelta(0); return; }
+    if (finalOffset > offsets.peek + 70) {
+      onClose();
+      setDragDelta(0);
+      return;
+    }
     const candidates: Array<{ name: SnapPoint; dist: number }> = [
       { name: "peek", dist: Math.abs(finalOffset - offsets.peek) },
       { name: "half", dist: Math.abs(finalOffset - offsets.half) },
@@ -191,7 +269,9 @@ function DraggableBottomSheet({
         style={{
           height: `${sheetHeight}px`,
           transform: `translateY(${currentOffset}px)`,
-          transition: isDragging ? "none" : "transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)",
+          transition: isDragging
+            ? "none"
+            : "transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)",
         }}
       >
         <div className="relative h-full bg-card/95 backdrop-blur-2xl border-t border-x border-border/40 rounded-t-3xl shadow-[0_-12px_40px_rgba(0,0,0,0.18)] flex flex-col overflow-hidden">
@@ -205,7 +285,9 @@ function DraggableBottomSheet({
           >
             <div className="w-12 h-1.5 bg-muted-foreground/30 rounded-full mx-auto" />
           </div>
-          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-6">{children}</div>
+          <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-6">
+            {children}
+          </div>
         </div>
       </div>
     </>
@@ -225,67 +307,111 @@ function MobileSearchModal({
     setSearch(""); setType(""); setSafeCeliac(false); setVerificationLevel("");
   };
   return (
-    <div className="fixed inset-0 z-[1200] md:hidden bg-background animate-in slide-in-from-bottom duration-300">
-      <div className="sticky top-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/40">
+    // flex-col + overflow-hidden permet au header de rester fixe en haut
+    // et au contenu interne de scroller indépendamment
+    <div className="fixed inset-0 z-[1200] md:hidden bg-background animate-in slide-in-from-bottom duration-300 flex flex-col">
+
+      {/* === HEADER FIXE — plus de "sticky", c'est un vrai bloc en haut === */}
+      <div className="relative flex-shrink-0 backdrop-blur-xl bg-background/95 border-b border-border/40">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         <div className="flex items-center gap-3 px-4 h-16">
           <button onClick={onClose} className="p-2 -ml-2 rounded-full hover:bg-accent/50 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h2 className="font-bold text-lg flex-1">Rechercher</h2>
-          <button onClick={resetAll} className="text-sm font-medium text-muted-foreground hover:text-foreground">Effacer</button>
+          <button onClick={resetAll} className="text-sm font-medium text-muted-foreground hover:text-foreground">
+            Effacer
+          </button>
         </div>
       </div>
-      <div className="p-4 space-y-7 pb-32">
-        <div>
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">Recherche libre</Label>
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input autoFocus placeholder="Nom, ville, mot-clé..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-11 h-12 rounded-2xl bg-card/50 backdrop-blur border-border/50 text-base" />
-          </div>
-        </div>
-        <div>
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">Type d'établissement</Label>
-          <div className="grid grid-cols-3 gap-2">
-            {typeOptions.map((opt) => {
-              const active = type === opt.value;
-              return (
-                <button key={opt.value} onClick={() => setType(opt.value)} className={`relative p-3 rounded-2xl text-sm font-medium border transition-all duration-200 ${active ? "text-primary-foreground border-primary" : "border-border/50 hover:bg-accent/50"}`}>
-                  {active && <span className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl shadow-md shadow-primary/30" />}
-                  <span className="relative">{opt.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div>
-          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">Filtres</Label>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-card/50 backdrop-blur border border-border/50">
-              <div>
-                <p className="font-medium text-sm">Safe cœliaque</p>
-                <p className="text-xs text-muted-foreground">Établissements vraiment sûrs pour les cœliaques</p>
-              </div>
-              <Switch checked={safeCeliac} onCheckedChange={setSafeCeliac} />
+
+      {/* === CONTENU SCROLLABLE — flex-1 prend tout l'espace restant === */}
+      <div className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="p-4 space-y-7 pb-6">
+          {/* Champ de recherche — on retire autoFocus pour que l'input
+              ne se positionne pas au-dessus du clavier mobile */}
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">
+              Recherche libre
+            </Label>
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Nom, ville, mot-clé..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-11 h-12 rounded-2xl bg-card/50 backdrop-blur border-border/50 text-base"
+              />
             </div>
-            <button onClick={() => setVerificationLevel((v: string) => v === "certified" ? "" : "certified")} className="w-full flex items-center justify-between p-4 rounded-2xl bg-card/50 backdrop-blur border border-border/50 hover:bg-card transition-colors text-left">
-              <div>
-                <p className="font-medium text-sm">Certifiés uniquement</p>
-                <p className="text-xs text-muted-foreground">Vérifiés par une association</p>
+          </div>
+
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">
+              Type d'établissement
+            </Label>
+            <div className="grid grid-cols-3 gap-2">
+              {typeOptions.map((opt) => {
+                const active = type === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setType(opt.value)}
+                    className={`relative p-3 rounded-2xl text-sm font-medium border transition-all duration-200 ${
+                      active ? "text-primary-foreground border-primary" : "border-border/50 hover:bg-accent/50"
+                    }`}
+                  >
+                    {active && (
+                      <span className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl shadow-md shadow-primary/30" />
+                    )}
+                    <span className="relative">{opt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">
+              Filtres
+            </Label>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-card/50 backdrop-blur border border-border/50">
+                <div>
+                  <p className="font-medium text-sm">Safe cœliaque</p>
+                  <p className="text-xs text-muted-foreground">Établissements vraiment sûrs pour les cœliaques</p>
+                </div>
+                <Switch checked={safeCeliac} onCheckedChange={setSafeCeliac} />
               </div>
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${verificationLevel === "certified" ? "bg-primary border-primary shadow-md shadow-primary/30" : "border-border"}`}>
-                {verificationLevel === "certified" && (
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                )}
-              </div>
-            </button>
+
+              <button
+                onClick={() => setVerificationLevel((v: string) => v === "certified" ? "" : "certified")}
+                className="w-full flex items-center justify-between p-4 rounded-2xl bg-card/50 backdrop-blur border border-border/50 hover:bg-card transition-colors text-left"
+              >
+                <div>
+                  <p className="font-medium text-sm">Certifiés uniquement</p>
+                  <p className="text-xs text-muted-foreground">Vérifiés par une association</p>
+                </div>
+                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                  verificationLevel === "certified" ? "bg-primary border-primary shadow-md shadow-primary/30" : "border-border"
+                }`}>
+                  {verificationLevel === "certified" && (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 p-4 backdrop-blur-xl bg-background/90 border-t border-border/40">
-        <Button onClick={onClose} className="w-full h-12 rounded-2xl text-base font-semibold bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
+
+      {/* === CTA — flex-shrink-0 reste en bas === */}
+      <div className="flex-shrink-0 p-4 backdrop-blur-xl bg-background/95 border-t border-border/40">
+        <Button
+          onClick={onClose}
+          className="w-full h-12 rounded-2xl text-base font-semibold bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow"
+        >
           Voir {resultsCount} résultat{resultsCount !== 1 ? "s" : ""}
         </Button>
       </div>
@@ -296,15 +422,26 @@ function MobileSearchModal({
 // ============================================================
 // SelectedContent — inchangé
 // ============================================================
-function SelectedContent({ selected, onClose }: { selected: any; onClose: () => void }) {
+function SelectedContent({
+  selected,
+  onClose,
+}: {
+  selected: any;
+  onClose: () => void;
+}) {
   return (
     <div className="space-y-3">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <h3 className="font-bold text-lg leading-tight">{selected.name}</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">{typeLabels[selected.type]} · {selected.city}</p>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {typeLabels[selected.type]} · {selected.city}
+          </p>
         </div>
-        <button onClick={onClose} className="p-1.5 -mr-1.5 -mt-1.5 hover:bg-accent rounded-full transition-colors">
+        <button
+          onClick={onClose}
+          className="p-1.5 -mr-1.5 -mt-1.5 hover:bg-accent rounded-full transition-colors"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -312,7 +449,10 @@ function SelectedContent({ selected, onClose }: { selected: any; onClose: () => 
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20">
           <Navigation className="w-3.5 h-3.5 text-primary" />
           <span className="text-sm font-semibold text-primary">
-            {selected.distance < 1 ? `${Math.round(selected.distance * 1000)} m` : `${selected.distance.toFixed(2)} km`} de vous
+            {selected.distance < 1
+              ? `${Math.round(selected.distance * 1000)} m`
+              : `${selected.distance.toFixed(2)} km`}{" "}
+            de vous
           </span>
         </div>
       )}
@@ -323,10 +463,16 @@ function SelectedContent({ selected, onClose }: { selected: any; onClose: () => 
       {selected.averageRating != null && (
         <div className="flex items-center gap-2">
           <StarRating rating={selected.averageRating} />
-          <span className="text-xs text-muted-foreground">({selected.reviewCount} avis)</span>
+          <span className="text-xs text-muted-foreground">
+            ({selected.reviewCount} avis)
+          </span>
         </div>
       )}
-      {selected.description && <p className="text-sm text-muted-foreground leading-relaxed">{selected.description}</p>}
+      {selected.description && (
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {selected.description}
+        </p>
+      )}
       <Link href={`/etablissements/${selected.id}`}>
         <Button className="w-full gap-2 h-11 rounded-xl bg-gradient-to-r from-primary to-primary/80 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-shadow">
           Voir la fiche complète
@@ -347,19 +493,32 @@ function SelectedContent({ selected, onClose }: { selected: any; onClose: () => 
 // - bouton "Effacer" si filtres actifs
 // ============================================================
 function DesktopHeroBar({
-  search, setSearch,
-  type, setType,
-  safeCeliac, setSafeCeliac,
-  verificationLevel, setVerificationLevel,
-  geoState, locate, resetGeo,
-  resultsCount, isLoading,
+  search,
+  setSearch,
+  type,
+  setType,
+  safeCeliac,
+  setSafeCeliac,
+  verificationLevel,
+  setVerificationLevel,
+  geoState,
+  locate,
+  resetGeo,
+  resultsCount,
+  isLoading,
 }: any) {
   const nearbyMode = geoState.status === "success";
   const activeFilterCount =
-    (type ? 1 : 0) + (safeCeliac ? 1 : 0) + (verificationLevel ? 1 : 0) + (nearbyMode ? 1 : 0);
+    (type ? 1 : 0) +
+    (safeCeliac ? 1 : 0) +
+    (verificationLevel ? 1 : 0) +
+    (nearbyMode ? 1 : 0);
 
   function resetAll() {
-    setSearch(""); setType(""); setSafeCeliac(false); setVerificationLevel("");
+    setSearch("");
+    setType("");
+    setSafeCeliac(false);
+    setVerificationLevel("");
     if (nearbyMode) resetGeo();
   }
 
@@ -405,9 +564,13 @@ function DesktopHeroBar({
               <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 rounded-full shadow-md shadow-primary/30" />
             )}
             <span className="relative flex items-center gap-2">
-              {geoState.status === "loading"
-                ? <Loader2 className="w-4 h-4 animate-spin" />
-                : <Navigation className={`w-4 h-4 ${nearbyMode ? "fill-primary-foreground" : ""}`} />}
+              {geoState.status === "loading" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Navigation
+                  className={`w-4 h-4 ${nearbyMode ? "fill-primary-foreground" : ""}`}
+                />
+              )}
               {nearbyMode ? "Près de moi" : "Me localiser"}
               {nearbyMode && <X className="w-3 h-3 ml-1 opacity-70" />}
             </span>
@@ -422,7 +585,10 @@ function DesktopHeroBar({
               </span>
             ) : (
               <>
-                <span className="font-bold text-foreground">{resultsCount}</span> résultat{resultsCount !== 1 ? "s" : ""}
+                <span className="font-bold text-foreground">
+                  {resultsCount}
+                </span>{" "}
+                résultat{resultsCount !== 1 ? "s" : ""}
               </>
             )}
           </div>
@@ -493,8 +659,16 @@ function DesktopHeroBar({
               </p>
               {[
                 { value: "", label: "Tous", desc: "Pas de filtre" },
-                { value: "certified", label: "Certifiés", desc: "Vérifiés par une association" },
-                { value: "community", label: "Communauté", desc: "Vérifiés par les utilisateurs" },
+                {
+                  value: "certified",
+                  label: "Certifiés",
+                  desc: "Vérifiés par une association",
+                },
+                {
+                  value: "community",
+                  label: "Communauté",
+                  desc: "Vérifiés par les utilisateurs",
+                },
               ].map((opt) => {
                 const active = verificationLevel === opt.value;
                 return (
@@ -505,14 +679,25 @@ function DesktopHeroBar({
                       active ? "bg-primary/10" : "hover:bg-accent/50"
                     }`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                      active ? "bg-primary border-primary" : "border-border"
-                    }`}>
-                      {active && <Check className="w-3 h-3 text-primary-foreground" strokeWidth={3} />}
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                        active ? "bg-primary border-primary" : "border-border"
+                      }`}
+                    >
+                      {active && (
+                        <Check
+                          className="w-3 h-3 text-primary-foreground"
+                          strokeWidth={3}
+                        />
+                      )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium leading-tight">{opt.label}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                      <p className="text-sm font-medium leading-tight">
+                        {opt.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {opt.desc}
+                      </p>
                     </div>
                   </button>
                 );
@@ -531,8 +716,12 @@ function DesktopHeroBar({
           >
             <span className="text-base leading-none">🌾</span>
             Safe cœliaque
-            <div className={`w-8 h-4 rounded-full relative transition-colors ${safeCeliac ? "bg-orange-500" : "bg-muted"}`}>
-              <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${safeCeliac ? "left-4" : "left-0.5"}`} />
+            <div
+              className={`w-8 h-4 rounded-full relative transition-colors ${safeCeliac ? "bg-orange-500" : "bg-muted"}`}
+            >
+              <div
+                className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${safeCeliac ? "left-4" : "left-0.5"}`}
+              />
             </div>
           </button>
 
@@ -581,12 +770,20 @@ export default function HomePage() {
   if (type) params.type = type;
   if (safeCeliac) params.safeCeliac = true;
   if (verificationLevel) params.verificationLevel = verificationLevel;
-  if (userLat != null && userLng != null) { params.lat = userLat; params.lng = userLng; }
+  if (userLat != null && userLng != null) {
+    params.lat = userLat;
+    params.lng = userLng;
+  }
 
   const { data, isLoading } = useListEstablishments(params, {
-    query: { queryKey: getListEstablishmentsQueryKey(params), enabled: geoState.status !== "loading" },
+    query: {
+      queryKey: getListEstablishmentsQueryKey(params),
+      enabled: geoState.status !== "loading",
+    },
   });
-  const { data: stats } = useGetPlatformStats({ query: { queryKey: getGetPlatformStatsQueryKey() } });
+  const { data: stats } = useGetPlatformStats({
+    query: { queryKey: getGetPlatformStatsQueryKey() },
+  });
 
   const establishments = (data as any)?.establishments ?? [];
   const selected = establishments.find((e: any) => e.id === selectedId) ?? null;
@@ -595,18 +792,24 @@ export default function HomePage() {
     (type ? 1 : 0) + (safeCeliac ? 1 : 0) + (verificationLevel ? 1 : 0);
 
   return (
-    <div className="-mb-20 md:mb-0 flex flex-col h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)] overflow-hidden relative">
-
+    <div className="flex flex-col h-[calc(100dvh-64px-64px)] md:h-[calc(100dvh-64px)] overflow-hidden relative">
       {/* ========================================================
           BARRE HERO DESKTOP — recherche + filtres en haut
           ======================================================== */}
       <DesktopHeroBar
-        search={search} setSearch={setSearch}
-        type={type} setType={setType}
-        safeCeliac={safeCeliac} setSafeCeliac={setSafeCeliac}
-        verificationLevel={verificationLevel} setVerificationLevel={setVerificationLevel}
-        geoState={geoState} locate={locate} resetGeo={resetGeo}
-        resultsCount={establishments.length} isLoading={isLoading}
+        search={search}
+        setSearch={setSearch}
+        type={type}
+        setType={setType}
+        safeCeliac={safeCeliac}
+        setSafeCeliac={setSafeCeliac}
+        verificationLevel={verificationLevel}
+        setVerificationLevel={setVerificationLevel}
+        geoState={geoState}
+        locate={locate}
+        resetGeo={resetGeo}
+        resultsCount={establishments.length}
+        isLoading={isLoading}
       />
 
       {/* ========================================================
@@ -636,7 +839,9 @@ export default function HomePage() {
           <div className="flex-1 overflow-y-auto">
             {isLoading ? (
               <div className="p-3 space-y-2">
-                {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-20 rounded-xl" />
+                ))}
               </div>
             ) : establishments.length === 0 ? (
               <div className="p-8 text-center">
@@ -656,7 +861,9 @@ export default function HomePage() {
                   return (
                     <button
                       key={e.id}
-                      onClick={() => setSelectedId(e.id === selectedId ? null : e.id)}
+                      onClick={() =>
+                        setSelectedId(e.id === selectedId ? null : e.id)
+                      }
                       className={`w-full text-left px-3 py-3 rounded-xl transition-all border ${
                         isSel
                           ? "bg-gradient-to-r from-primary/10 to-primary/5 border-primary/30 shadow-sm shadow-primary/10"
@@ -669,7 +876,9 @@ export default function HomePage() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
-                            <span className="font-semibold text-sm leading-tight truncate">{e.name}</span>
+                            <span className="font-semibold text-sm leading-tight truncate">
+                              {e.name}
+                            </span>
                             {e.distance != null && (
                               <span className="text-xs font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent flex-shrink-0">
                                 {e.distance < 1
@@ -684,10 +893,16 @@ export default function HomePage() {
                           <div className="flex items-center gap-1.5 mt-1.5">
                             <div
                               className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: verificationColors[e.verificationLevel] ?? "#6b7280" }}
+                              style={{
+                                backgroundColor:
+                                  verificationColors[e.verificationLevel] ??
+                                  "#6b7280",
+                              }}
                             />
                             {e.safeCeliac && <SafeCeliacBadge />}
-                            {e.averageRating != null && <StarRating rating={e.averageRating} />}
+                            {e.averageRating != null && (
+                              <StarRating rating={e.averageRating} />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -706,15 +921,25 @@ export default function HomePage() {
                   <p className="text-base font-bold bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent">
                     {(stats as any).totalEstablishments}
                   </p>
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Lieux</p>
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                    Lieux
+                  </p>
                 </div>
                 <div className="bg-background/40 backdrop-blur rounded-xl p-2 border border-border/30">
-                  <p className="text-base font-bold text-green-600">{(stats as any).certifiedCount}</p>
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Certifiés</p>
+                  <p className="text-base font-bold text-green-600">
+                    {(stats as any).certifiedCount}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                    Certifiés
+                  </p>
                 </div>
                 <div className="bg-background/40 backdrop-blur rounded-xl p-2 border border-border/30">
-                  <p className="text-base font-bold text-orange-600">{(stats as any).safeCeliacCount}</p>
-                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Safe</p>
+                  <p className="text-base font-bold text-orange-600">
+                    {(stats as any).safeCeliacCount}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                    Safe
+                  </p>
                 </div>
               </div>
             </div>
@@ -723,13 +948,20 @@ export default function HomePage() {
 
         {/* ----- CARTE ----- */}
         <div className="flex-1 relative">
-          <MapContainer center={[46.8, 2.3]} zoom={6} className="w-full h-full" zoomControl={false}>
+          <MapContainer
+            center={[46.8, 2.3]}
+            zoom={6}
+            className="w-full h-full"
+            zoomControl={false}
+          >
             <TileLayer
               url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
 
-            {userLat != null && userLng != null && <MapController lat={userLat} lng={userLng} />}
+            {userLat != null && userLng != null && (
+              <MapController lat={userLat} lng={userLng} />
+            )}
 
             {userLat != null && userLng != null && (
               <>
@@ -738,7 +970,12 @@ export default function HomePage() {
                   <Circle
                     center={[userLat, userLng]}
                     radius={geoState.accuracy}
-                    pathOptions={{ color: "#3b82f6", fillColor: "#3b82f6", fillOpacity: 0.1, weight: 1 }}
+                    pathOptions={{
+                      color: "#3b82f6",
+                      fillColor: "#3b82f6",
+                      fillOpacity: 0.1,
+                      weight: 1,
+                    }}
                   />
                 )}
               </>
@@ -748,23 +985,41 @@ export default function HomePage() {
               <Marker
                 key={e.id}
                 position={[e.lat, e.lng]}
-                icon={createMarker(e.type, e.verificationLevel, selectedId === e.id)}
+                icon={createMarker(
+                  e.type,
+                  e.verificationLevel,
+                  selectedId === e.id,
+                )}
                 eventHandlers={{ click: () => setSelectedId(e.id) }}
               >
                 <Popup>
                   <div className="min-w-[200px]">
                     <h3 className="font-semibold text-sm mb-1">{e.name}</h3>
-                    <p className="text-xs text-gray-500 mb-1">{typeLabels[e.type]} · {e.city}</p>
+                    <p className="text-xs text-gray-500 mb-1">
+                      {typeLabels[e.type]} · {e.city}
+                    </p>
                     {e.distance != null && (
                       <p className="text-xs font-semibold text-green-700 mb-1">
-                        {e.distance < 1 ? `${Math.round(e.distance * 1000)} m` : `${e.distance.toFixed(2)} km`} de vous
+                        {e.distance < 1
+                          ? `${Math.round(e.distance * 1000)} m`
+                          : `${e.distance.toFixed(2)} km`}{" "}
+                        de vous
                       </p>
                     )}
-                    {e.safeCeliac && <p className="text-xs text-orange-600 font-medium mb-1">Safe cœliaque</p>}
-                    {e.averageRating != null && (
-                      <p className="text-xs text-gray-600">{e.averageRating.toFixed(1)}/5 ({e.reviewCount} avis)</p>
+                    {e.safeCeliac && (
+                      <p className="text-xs text-orange-600 font-medium mb-1">
+                        Safe cœliaque
+                      </p>
                     )}
-                    <a href={`/etablissements/${e.id}`} className="text-xs text-green-600 hover:underline font-medium mt-1 block">
+                    {e.averageRating != null && (
+                      <p className="text-xs text-gray-600">
+                        {e.averageRating.toFixed(1)}/5 ({e.reviewCount} avis)
+                      </p>
+                    )}
+                    <a
+                      href={`/etablissements/${e.id}`}
+                      className="text-xs text-green-600 hover:underline font-medium mt-1 block"
+                    >
                       Voir la fiche →
                     </a>
                   </div>
@@ -784,7 +1039,10 @@ export default function HomePage() {
           {selected && (
             <div className="hidden md:block absolute top-4 right-4 z-[1000] w-80 bg-card/95 backdrop-blur-2xl border border-border/40 rounded-3xl shadow-2xl p-5">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-              <SelectedContent selected={selected} onClose={() => setSelectedId(null)} />
+              <SelectedContent
+                selected={selected}
+                onClose={() => setSelectedId(null)}
+              />
             </div>
           )}
 
@@ -795,7 +1053,9 @@ export default function HomePage() {
             data-testid="mobile-search-trigger"
           >
             <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <span className={`flex-1 text-left text-sm truncate ${search ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+            <span
+              className={`flex-1 text-left text-sm truncate ${search ? "text-foreground font-medium" : "text-muted-foreground"}`}
+            >
               {search || "Où mangez-vous sans gluten ?"}
             </span>
             {activeFilterCount > 0 ? (
@@ -808,8 +1068,16 @@ export default function HomePage() {
           </button>
 
           {/* Bottom sheet draggable (mobile) */}
-          <DraggableBottomSheet open={selected !== null} onClose={() => setSelectedId(null)}>
-            {selected && <SelectedContent selected={selected} onClose={() => setSelectedId(null)} />}
+          <DraggableBottomSheet
+            open={selected !== null}
+            onClose={() => setSelectedId(null)}
+          >
+            {selected && (
+              <SelectedContent
+                selected={selected}
+                onClose={() => setSelectedId(null)}
+              />
+            )}
           </DraggableBottomSheet>
         </div>
       </div>
@@ -818,10 +1086,14 @@ export default function HomePage() {
       <MobileSearchModal
         open={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
-        search={search} setSearch={setSearch}
-        type={type} setType={setType}
-        safeCeliac={safeCeliac} setSafeCeliac={setSafeCeliac}
-        verificationLevel={verificationLevel} setVerificationLevel={setVerificationLevel}
+        search={search}
+        setSearch={setSearch}
+        type={type}
+        setType={setType}
+        safeCeliac={safeCeliac}
+        setSafeCeliac={setSafeCeliac}
+        verificationLevel={verificationLevel}
+        setVerificationLevel={setVerificationLevel}
         resultsCount={establishments.length}
       />
     </div>

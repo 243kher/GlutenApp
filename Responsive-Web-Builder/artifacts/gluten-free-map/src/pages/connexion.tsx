@@ -91,7 +91,7 @@ export default function ConnexionPage() {
                 </span>
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Connectez-vous à votre compte Gluten Spot
+                Connectez-vous à votre compte Gluten Free Spot
               </p>
             </div>
 
@@ -235,7 +235,7 @@ function AuthHeroPanel({
             </div>
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Gluten Spot
+            Gluten Free Spot
           </span>
         </Link>
 
