@@ -472,6 +472,9 @@ export default function EtablissementDetailPage() {
 // ============================================================
 // Ligne d'info — icône + texte (+ lien optionnel)
 // ============================================================
+// ============================================================
+// Ligne d'info — icône + texte (+ lien optionnel)
+// ============================================================
 function InfoRow({
   icon: Icon, text, href, external,
 }: { icon: any; text: string; href?: string; external?: boolean }) {
@@ -488,7 +491,7 @@ function InfoRow({
 
   if (href) {
     return (
-      
+      <a
         href={href}
         target={external ? "_blank" : undefined}
         rel={external ? "noopener noreferrer" : undefined}
@@ -499,6 +502,7 @@ function InfoRow({
     );
   }
   return <div className="flex items-center gap-3">{content}</div>;
+
 }
 
 // ============================================================
