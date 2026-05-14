@@ -44,7 +44,7 @@ export default function Navbar() {
                 <Leaf className="w-6 h-6 text-primary relative" />
               </div>
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent hidden sm:block">
-                Gluten Spot
+                Gluten Free Spot
               </span>
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent sm:hidden">
                 GS

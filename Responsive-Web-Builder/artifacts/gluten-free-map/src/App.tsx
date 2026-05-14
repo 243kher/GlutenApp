@@ -2,7 +2,7 @@
  * Main application component for the Gluten-Free Map.
  * This app allows users to find and review gluten-free establishments and products.
  *//**
- * Composant racine de l'application Gluten Spot.
+ * Composant racine de l'application Gluten Free Spot.
  * Gère le routing, les providers globaux, et le layout responsive
  * (desktop avec footer, mobile avec bottom nav).
  */
@@ -80,7 +80,7 @@ function AppLayout() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Leaf className="w-5 h-5 text-primary" />
             <p className="font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Gluten Spot
+              Gluten Free Spot
             </p>
           </div>
           <p className="text-sm text-muted-foreground">
