@@ -60,7 +60,7 @@ export default function AdminPage() {
   });
 
   // ============================================================
-  // Garde d'accès — page réservée aux admins
+  // Garde d'accès  page réservée aux admins
   // ============================================================
   if (!user || user.role !== "admin") {
     return (
@@ -109,7 +109,7 @@ export default function AdminPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 md:py-10 pb-24 md:pb-10">
       {/* ========================================================
-          HEADER ADMIN — avec couronne et bandeau de bienvenue
+          HEADER ADMIN  avec couronne et bandeau de bienvenue
           ======================================================== */}
       <div className="mb-6 md:mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-400/30 mb-3">
@@ -140,7 +140,7 @@ export default function AdminPage() {
       </div>
 
       {/* ========================================================
-          STATS — vue d'ensemble en haut
+          STATS  vue d'ensemble en haut
           ======================================================== */}
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
         <StatCard
@@ -167,7 +167,7 @@ export default function AdminPage() {
       </div>
 
       {/* ========================================================
-          PANNEAU PRINCIPAL — liste des signalements avec onglets
+          PANNEAU PRINCIPAL  liste des signalements avec onglets
           ======================================================== */}
       <div className="relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl shadow-sm overflow-hidden">
         <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
@@ -185,7 +185,7 @@ export default function AdminPage() {
             </span>
           </div>
 
-          {/* Onglets — pilules avec dégradé sur l'actif */}
+          {/* Onglets  pilules avec dégradé sur l'actif */}
           <div className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1">
             <TabPill
               active={statusFilter === "pending"}
@@ -237,7 +237,7 @@ export default function AdminPage() {
 }
 
 // ============================================================
-// StatCard — carte de statistique avec icône colorée
+// StatCard  carte de statistique avec icône colorée
 // ============================================================
 function StatCard({
   icon: Icon, label, value, color, loading,
@@ -268,7 +268,7 @@ function StatCard({
 }
 
 // ============================================================
-// TabPill — onglet de filtre
+// TabPill  onglet de filtre
 // ============================================================
 function TabPill({
   active, onClick, icon: Icon, label,
@@ -294,7 +294,7 @@ function TabPill({
 }
 
 // ============================================================
-// ReportCard — carte d'un signalement
+// ReportCard  carte d'un signalement
 // ============================================================
 function ReportCard({
   report, onResolve, resolving,
@@ -376,7 +376,7 @@ function ReportCard({
 }
 
 // ============================================================
-// EmptyState — message quand aucun signalement
+// EmptyState essage quand aucun signalement
 // ============================================================
 function EmptyState({ statusFilter }: { statusFilter: StatusFilter }) {
   const messages = {

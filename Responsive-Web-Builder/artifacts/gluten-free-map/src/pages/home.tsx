@@ -136,7 +136,7 @@ function MapController({ lat, lng }: { lat: number; lng: number }) {
 }
 
 // ============================================================
-// LocateButton — flottant en bas à droite de la carte
+// LocateButton flottant en bas à droite de la carte
 // ============================================================
 function LocateButton({
   onLocate,
@@ -179,7 +179,7 @@ function LocateButton({
 }
 
 // ============================================================
-// DraggableBottomSheet — inchangé (mobile)
+// DraggableBottomSheet inchangé (mobile)
 // ============================================================
 type SnapPoint = "peek" | "half" | "full";
 function DraggableBottomSheet({
@@ -295,7 +295,7 @@ function DraggableBottomSheet({
 }
 
 // ============================================================
-// MobileSearchModal — inchangé
+// MobileSearchModal inchangé
 // ============================================================
 function MobileSearchModal({
   open, onClose, search, setSearch, type, setType,
@@ -311,7 +311,7 @@ function MobileSearchModal({
     // et au contenu interne de scroller indépendamment
     <div className="fixed inset-0 z-[1200] md:hidden bg-background animate-in slide-in-from-bottom duration-300 flex flex-col">
 
-      {/* === HEADER FIXE — plus de "sticky", c'est un vrai bloc en haut === */}
+      {/* === HEADER FIXE  plus de "sticky", c'est un vrai bloc en haut === */}
       <div className="relative flex-shrink-0 backdrop-blur-xl bg-background/95 border-b border-border/40">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         <div className="flex items-center gap-3 px-4 h-16">
@@ -325,10 +325,10 @@ function MobileSearchModal({
         </div>
       </div>
 
-      {/* === CONTENU SCROLLABLE — flex-1 prend tout l'espace restant === */}
+      {/* === CONTENU SCROLLABLE  flex-1 prend tout l'espace restant === */}
       <div className="flex-1 overflow-y-auto overscroll-contain">
         <div className="p-4 space-y-7 pb-6">
-          {/* Champ de recherche — on retire autoFocus pour que l'input
+          {/* Champ de recherche  on retire autoFocus pour que l'input
               ne se positionne pas au-dessus du clavier mobile */}
           <div>
             <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">
@@ -406,7 +406,7 @@ function MobileSearchModal({
         </div>
       </div>
 
-      {/* === CTA — flex-shrink-0 reste en bas === */}
+      {/* === CTA  flex-shrink-0 reste en bas === */}
       <div className="flex-shrink-0 p-4 backdrop-blur-xl bg-background/95 border-t border-border/40">
         <Button
           onClick={onClose}
@@ -420,7 +420,7 @@ function MobileSearchModal({
 }
 
 // ============================================================
-// SelectedContent — inchangé
+// SelectedContent  inchangé
 // ============================================================
 function SelectedContent({
   selected,
@@ -484,7 +484,7 @@ function SelectedContent({
 }
 
 // ============================================================
-// DesktopHeroBar — barre de recherche/filtres horizontale style Booking
+// DesktopHeroBar  barre de recherche/filtres horizontale style Booking
 // Sticky en haut, prend toute la largeur, avec :
 // - input de recherche élargi
 // - chips de catégories avec icônes
@@ -528,7 +528,7 @@ function DesktopHeroBar({
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3 space-y-3">
-        {/* === LIGNE 1 — recherche + bouton localisation + compteur === */}
+        {/* === LIGNE 1  recherche + bouton localisation + compteur === */}
         <div className="flex items-center gap-3">
           {/* Barre de recherche élargie */}
           <div className="relative flex-1 max-w-2xl">
@@ -594,7 +594,7 @@ function DesktopHeroBar({
           </div>
         </div>
 
-        {/* === LIGNE 2 — chips de catégories + filtres avancés === */}
+        {/* === LIGNE 2  chips de catégories + filtres avancés === */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Chips de types avec icônes */}
           <div className="flex gap-1.5 flex-wrap">
@@ -750,7 +750,7 @@ function DesktopHeroBar({
 }
 
 // ============================================================
-// HomePage — composant principal
+// HomePage  composant principal
 // ============================================================
 export default function HomePage() {
   const [search, setSearch] = useState("");
@@ -794,7 +794,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col h-[calc(100dvh-64px-64px)] md:h-[calc(100dvh-64px)] overflow-hidden relative">
       {/* ========================================================
-          BARRE HERO DESKTOP — recherche + filtres en haut
+          BARRE HERO DESKTOP  recherche + filtres en haut
           ======================================================== */}
       <DesktopHeroBar
         search={search}
@@ -813,14 +813,14 @@ export default function HomePage() {
       />
 
       {/* ========================================================
-          ZONE PRINCIPALE — sidebar liste + carte
+          ZONE PRINCIPALE  sidebar liste + carte
           ======================================================== */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* ----- SIDEBAR DESKTOP — uniquement la liste des résultats ----- */}
+        {/* ----- SIDEBAR DESKTOP  uniquement la liste des résultats ----- */}
         <aside className="hidden md:flex flex-col w-80 xl:w-96 bg-card/40 backdrop-blur-xl border-r border-border/40 z-10 flex-shrink-0 relative">
           <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
 
-          {/* Header sidebar — info de tri */}
+          {/* Header sidebar  info de tri */}
           <div className="px-4 py-3 border-b border-border/40 flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
               {isLoading

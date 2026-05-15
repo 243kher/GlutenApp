@@ -382,7 +382,7 @@ nav.sticky, nav.fixed {
   z-index: 1100;
 }
 
-/* Radix UI — toutes les surfaces flottantes (dropdown, popover, select, tooltip) */
+/* Radix UI  toutes les surfaces flottantes (dropdown, popover, select, tooltip) */
 [data-radix-popper-content-wrapper] {
   z-index: 1300 !important;
 }
@@ -393,7 +393,7 @@ nav.sticky, nav.fixed {
   z-index: 1200 !important;
 }
 
-/* Radix Toast — au-dessus de tout */
+/* Radix Toast  au-dessus de tout */
 [data-radix-toast-viewport] {
   z-index: 1400 !important;
 }
@@ -410,7 +410,7 @@ nav.sticky, nav.fixed {
 .leaflet-overlay-pane { z-index: 400 !important; }
 .leaflet-tile-pane { z-index: 200 !important; }
 
-/* Popups Leaflet — souvent ils ont l'air écrasés visuellement */
+/* Popups Leaflet  souvent ils ont l'air écrasés visuellement */
 .leaflet-popup-content-wrapper {
   border-radius: 1rem !important;
   backdrop-filter: blur(12px);

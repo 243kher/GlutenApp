@@ -60,7 +60,7 @@ function PillButton({
 }
 
 // ============================================================
-// Contenu des filtres — partagé entre sidebar desktop et modal mobile
+// Contenu des filtres partagé entre sidebar desktop et modal mobile
 // ============================================================
 function FiltersContent({
   search, setSearch,
@@ -132,7 +132,7 @@ function FiltersContent({
         )}
       </div>
 
-      {/* Recherche libre — uniquement sur desktop (sur mobile elle est en haut) */}
+      {/* Recherche libre  uniquement sur desktop (sur mobile elle est en haut) */}
       {!isMobile && (
         <div>
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">
@@ -209,7 +209,7 @@ function FiltersContent({
 }
 
 // ============================================================
-// Modal de filtres plein écran (mobile) — style Airbnb
+// Modal de filtres plein écran (mobile) style Airbnb
 // ============================================================
 function FiltersModal({ open, onClose, resultsCount, onReset, ...rest }: any) {
   if (!open) return null;
@@ -245,7 +245,7 @@ function FiltersModal({ open, onClose, resultsCount, onReset, ...rest }: any) {
 }
 
 // ============================================================
-// EtablissementsPage — composant principal
+// EtablissementsPage  composant principal
 // ============================================================
 export default function EtablissementsPage() {
   const [search, setSearch] = useState("");
@@ -332,7 +332,7 @@ export default function EtablissementsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
       {/* ========================================================
-          HEADER — titre avec gradient + CTA carte
+          HEADER  titre avec gradient + CTA carte
           ======================================================== */}
       <div className="mb-6 md:mb-8 flex items-end justify-between gap-4">
         <div>
@@ -346,7 +346,7 @@ export default function EtablissementsPage() {
           </p>
         </div>
 
-        {/* CTA carte — caché sur mobile (déjà dans la bottom nav) */}
+        {/* CTA carte caché sur mobile (déjà dans la bottom nav) */}
         <Link href="/" className="hidden md:block">
           <Button variant="outline" size="sm" className="gap-2 rounded-full backdrop-blur bg-card/50 border-border/50">
             <MapPin className="w-4 h-4" />
@@ -356,7 +356,7 @@ export default function EtablissementsPage() {
       </div>
 
       {/* ========================================================
-          BARRE MOBILE — recherche + bouton filtres (sticky)
+          BARRE MOBILE  recherche + bouton filtres (sticky)
           ======================================================== */}
       <div className="md:hidden sticky top-16 z-30 -mx-4 px-4 py-3 mb-4 backdrop-blur-xl bg-background/80 border-b border-border/40">
         <div className="flex gap-2">
@@ -408,7 +408,7 @@ export default function EtablissementsPage() {
       </div>
 
       {/* ========================================================
-          LAYOUT PRINCIPAL — sidebar desktop + grille
+          LAYOUT PRINCIPAL  sidebar desktop + grille
           ======================================================== */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar desktop avec glassmorphism */}

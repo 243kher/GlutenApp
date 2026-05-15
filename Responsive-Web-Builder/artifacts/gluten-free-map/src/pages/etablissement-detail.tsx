@@ -172,7 +172,7 @@ export default function EtablissementDetailPage() {
       </Link>
 
       {/* ========================================================
-          HERO — image avec dégradé + actions flottantes
+          HERO  image avec dégradé + actions flottantes
           ======================================================== */}
       <div className="relative rounded-3xl overflow-hidden mb-6 shadow-xl">
         <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent z-10" />
@@ -228,7 +228,7 @@ export default function EtablissementDetailPage() {
       </div>
 
       {/* ========================================================
-          CARTE PRINCIPALE — badges, rating, infos
+          CARTE PRINCIPALE  badges, rating, infos
           ======================================================== */}
       <div className="relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl p-5 md:p-6 mb-5 shadow-sm">
         {/* Badges + rating */}
@@ -281,7 +281,7 @@ export default function EtablissementDetailPage() {
           </div>
         )}
 
-        {/* === ACTIONS DESKTOP — boutons en ligne === */}
+        {/* === ACTIONS DESKTOP  boutons en ligne === */}
         <div className="hidden md:flex flex-wrap gap-2 pt-4 border-t border-border/40">
           <Button
             onClick={handleVerify}
@@ -409,7 +409,7 @@ export default function EtablissementDetailPage() {
       </div>
 
       {/* ========================================================
-          ACTION BAR MOBILE — sticky en bas (juste au-dessus de la bottom nav)
+          ACTION BAR MOBILE  sticky en bas (juste au-dessus de la bottom nav)
           ======================================================== */}
       <div className="md:hidden fixed bottom-16 left-0 right-0 z-[1100] backdrop-blur-xl bg-background/85 border-t border-border/40 px-4 py-3">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
@@ -470,10 +470,10 @@ export default function EtablissementDetailPage() {
 }
 
 // ============================================================
-// Ligne d'info — icône + texte (+ lien optionnel)
+// Ligne d'info  icône + texte (+ lien optionnel)
 // ============================================================
 // ============================================================
-// Ligne d'info — icône + texte (+ lien optionnel)
+// Ligne d'info  icône + texte (+ lien optionnel)
 // ============================================================
 function InfoRow({
   icon: Icon, text, href, external,
@@ -506,7 +506,7 @@ function InfoRow({
 }
 
 // ============================================================
-// Dialog "ajouter un avis" — extrait pour réutilisation desktop/mobile
+// Dialog "ajouter un avis"  extrait pour réutilisation desktop/mobile
 // ============================================================
 function ReviewDialogContent({
   reviewRating, setReviewRating, reviewComment, setReviewComment,
@@ -558,7 +558,7 @@ function ReviewDialogContent({
 }
 
 // ============================================================
-// Dialog "signaler" — extrait pour réutilisation desktop/mobile
+// Dialog "signaler"  extrait pour réutilisation desktop/mobile
 // ============================================================
 function ReportDialogContent({
   reportType, setReportType, reportDesc, setReportDesc, handleReport, isPending,

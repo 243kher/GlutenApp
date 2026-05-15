@@ -61,7 +61,7 @@ KNOWN_BBOXES = {
 def build_query(city: str, bbox: Optional[Tuple[float, float, float, float]]) -> str:
     """
     Construit une requête Overpass qui regarde plusieurs tags
-    (diet, name, description, cuisine) — version élargie.
+    (diet, name, description, cuisine) version élargie.
     """
     if bbox:
         # Filtre par bounding box (south, west, north, east)

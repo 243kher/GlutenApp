@@ -24,7 +24,7 @@ export default function Navbar() {
   return (
     <>
       {/* ============================================================
-          BARRE DU HAUT — visible partout
+          BARRE DU HAUT  visible partout
           - Mobile : logo + bouton utilisateur uniquement (minimaliste)
           - Desktop : logo + liens de navigation + bouton utilisateur
           ============================================================ */}
@@ -149,7 +149,7 @@ export default function Navbar() {
       </nav>
 
       {/* ============================================================
-          BOTTOM NAV BAR — uniquement sur mobile
+          BOTTOM NAV BAR  uniquement sur mobile
           Pattern moderne : navigation par onglets en bas de l'écran,
           accessible au pouce, comme Instagram / Spotify / etc.
           ============================================================ */}

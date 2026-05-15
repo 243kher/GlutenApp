@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 // ============================================================
-// Configuration des catégories — couleurs 
+// Configuration des catégories  couleurs 
 // ============================================================
 const categoryConfig: Record<string, { gradient: string; ring: string }> = {
   "Pain":     { gradient: "from-amber-400/20 to-amber-500/5",  ring: "ring-amber-400/30" },
@@ -65,7 +65,7 @@ export default function ProduitsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
       {/* ========================================================
-          HEADER — titre + sous-titre, plus impactant
+          HEADER  titre + sous-titre, plus impactant
           ======================================================== */}
       <div className="mb-6 md:mb-8 text-center md:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
@@ -83,7 +83,7 @@ export default function ProduitsPage() {
       </div>
 
       {/* ========================================================
-          BARRE DE RECHERCHE — hero pleine largeur avec glassmorphism
+          BARRE DE RECHERCHE  hero pleine largeur avec glassmorphism
           ======================================================== */}
       <div className="relative mb-6 max-w-3xl mx-auto md:mx-0">
         {/* Halo lumineux derrière la barre */}
@@ -109,7 +109,7 @@ export default function ProduitsPage() {
       </div>
 
       {/* ========================================================
-          FILTRES — chips de catégories + toggle "vérifiés"
+          FILTRES  chips de catégories + toggle "vérifiés"
           Scroll horizontal sur mobile, wrap sur desktop
           ======================================================== */}
       <div className="mb-6 space-y-3">
@@ -223,7 +223,7 @@ export default function ProduitsPage() {
 }
 
 // ============================================================
-// Chip de filtre par catégorie — pilule avec label
+// Chip de filtre par catégorie  pilule avec label
 // ============================================================
 function CategoryChip({
   label, active, onClick,
@@ -248,7 +248,7 @@ function CategoryChip({
 }
 
 // ============================================================
-// Carte produit — design moderne avec hover effect
+// Carte produit  design moderne avec hover effect
 // ============================================================
 function ProductCard({ product }: { product: any }) {
   const cfg = categoryConfig[product.category] ?? fallbackCategory;

@@ -64,7 +64,7 @@ export default function ConnexionPage() {
 
       <div className="min-h-full grid lg:grid-cols-2">
         {/* ========================================================
-            PANNEAU GAUCHE — visuel marketing (desktop uniquement)
+            PANNEAU GAUCHE  visuel marketing (desktop uniquement)
             ======================================================== */}
         <AuthHeroPanel
           tagline="Bon retour parmi nous"
@@ -73,11 +73,11 @@ export default function ConnexionPage() {
         />
 
         {/* ========================================================
-            PANNEAU DROIT — formulaire
+            PANNEAU DROIT  formulaire
             ======================================================== */}
         <div className="flex items-center justify-center p-4 md:p-8 lg:p-12">
           <div className="w-full max-w-md">
-            {/* Logo mobile only — sur desktop il est dans le panneau gauche */}
+            {/* Logo mobile only  sur desktop il est dans le panneau gauche */}
             <div className="lg:hidden text-center mb-6">
               <div className="relative inline-block mb-3">
                 <div className="absolute inset-0 bg-primary/40 blur-2xl rounded-full" />
@@ -185,7 +185,7 @@ export default function ConnexionPage() {
                 </form>
               </Form>
 
-              {/* Lien vers inscription — version mobile (sur desktop c'est en haut) */}
+              {/* Lien vers inscription  version mobile (sur desktop c'est en haut) */}
               <p className="lg:hidden text-center text-sm text-muted-foreground mt-5">
                 Pas encore de compte ?{" "}
                 <Link href="/inscription" className="font-semibold text-primary hover:underline">
@@ -194,7 +194,7 @@ export default function ConnexionPage() {
               </p>
             </div>
 
-            {/* === Comptes de démo — pliable, plus discret === */}
+            {/* === Comptes de démo  pliable, plus discret === */}
             <DemoAccounts onSelect={fillDemo} />
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function ConnexionPage() {
 }
 
 // ============================================================
-// AuthHeroPanel — panneau visuel marketing à gauche (desktop)
+// AuthHeroPanel  panneau visuel marketing à gauche (desktop)
 // Réutilisé tel quel sur Inscription
 // ============================================================
 function AuthHeroPanel({
@@ -239,7 +239,7 @@ function AuthHeroPanel({
           </span>
         </Link>
 
-        {/* Bloc central — headline */}
+        {/* Bloc central  headline */}
         <div className="max-w-md">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-5">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
@@ -278,7 +278,7 @@ function FeatureRow({ icon: Icon, text }: { icon: any; text: string }) {
 }
 
 // ============================================================
-// DemoAccounts — encart pour les comptes de démonstration
+// DemoAccounts  encart pour les comptes de démonstration
 // Plus discret, mais cliquable pour pré-remplir le formulaire
 // ============================================================
 function DemoAccounts({ onSelect }: { onSelect: (email: string, password: string) => void }) {

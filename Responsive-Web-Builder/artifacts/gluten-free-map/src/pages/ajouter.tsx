@@ -143,7 +143,7 @@ export default function AjouterPage() {
       </div>
 
       {/* ========================================================
-          STEPPER — barre de progression + labels
+          STEPPER  barre de progression + labels
           ======================================================== */}
       <div className="mb-8">
         {/* Étapes avec ronds */}
@@ -199,7 +199,7 @@ export default function AjouterPage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* ========================================================
-              STEP 1 — LOCALISATION
+              STEP 1  LOCALISATION
               ======================================================== */}
           {step === 1 && (
             <FormCard title="Localisation" subtitle="Où se trouve cet établissement ?">
@@ -304,7 +304,7 @@ export default function AjouterPage() {
           )}
 
           {/* ========================================================
-              STEP 2 — DÉTAILS
+              STEP 2  DÉTAILS
               ======================================================== */}
           {step === 2 && (
             <FormCard title="Détails" subtitle="Ajoutez des informations utiles aux visiteurs (optionnel)">
@@ -437,11 +437,11 @@ export default function AjouterPage() {
           )}
 
           {/* ========================================================
-              STEP 3 — CONFIRMATION
+              STEP 3  CONFIRMATION
               ======================================================== */}
           {step === 3 && (
             <FormCard title="Confirmation" subtitle="Vérifiez les informations avant de publier">
-              {/* Récap visuel — cartes plutôt qu'un tableau */}
+              {/* Récap visuel  cartes plutôt qu'un tableau */}
               <div className="space-y-2.5">
                 <RecapRow label="Nom" value={form.getValues("name")} />
                 <RecapRow
@@ -519,7 +519,7 @@ export default function AjouterPage() {
 }
 
 // ============================================================
-// FormCard — wrapper glassmorphism pour chaque étape
+// FormCard  wrapper glassmorphism pour chaque étape
 // ============================================================
 function FormCard({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
@@ -535,7 +535,7 @@ function FormCard({ title, subtitle, children }: { title: string; subtitle?: str
 }
 
 // ============================================================
-// CoordsBlock — coordonnées GPS + bouton "Utiliser ma position"
+// CoordsBlock  coordonnées GPS + bouton "Utiliser ma position"
 // Ce composant améliore vraiment l'UX : pas besoin de chercher
 // ses coords sur Google Maps à la main.
 // ============================================================
@@ -626,7 +626,7 @@ function CoordsBlock({ form }: { form: any }) {
 }
 
 // ============================================================
-// RecapRow — ligne de récapitulatif
+// RecapRow  ligne de récapitulatif
 // ============================================================
 function RecapRow({
   label, value, mono,

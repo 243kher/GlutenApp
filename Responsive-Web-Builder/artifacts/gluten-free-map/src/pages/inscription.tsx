@@ -23,20 +23,18 @@ const schema = z.object({
   role: z.enum(["user", "owner"]),
 });
 
-// Choix de profil — utilisateur ou propriétaire
+// Choix de profil  utilisateur ou propriétaire
 const roleChoices = [
   {
     value: "user",
     title: "Je cherche",
     desc: "Trouver des lieux sans gluten",
-    emoji: "🔍",
     gradient: "from-blue-500/20 to-cyan-500/10",
   },
   {
     value: "owner",
     title: "Je gère",
     desc: "Établissement à référencer",
-    emoji: "🏪",
     gradient: "from-purple-500/20 to-pink-500/10",
   },
 ] as const;
@@ -85,16 +83,16 @@ export default function InscriptionPage() {
 
       <div className="min-h-full grid lg:grid-cols-2">
         {/* ========================================================
-            PANNEAU GAUCHE — visuel marketing (desktop uniquement)
+            PANNEAU GAUCHE  visuel marketing (desktop uniquement)
             ======================================================== */}
         <AuthHeroPanel
           tagline="Rejoignez la communauté"
           headline="Découvrez le sans gluten autrement"
-          subline="Carte interactive, avis vérifiés, recommandations adaptées — votre quotidien sans gluten, simplifié."
+          subline="Carte interactive, avis vérifiés, recommandations adaptées  votre quotidien sans gluten, simplifié."
         />
 
         {/* ========================================================
-            PANNEAU DROIT — formulaire d'inscription
+            PANNEAU DROIT  formulaire d'inscription
             ======================================================== */}
         <div className="flex items-center justify-center p-4 md:p-8 lg:p-12">
           <div className="w-full max-w-md">
@@ -137,7 +135,7 @@ export default function InscriptionPage() {
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                  {/* === Sélecteur de rôle — deux gros boutons === */}
+                  {/* === Sélecteur de rôle  deux gros boutons === */}
                   <FormField control={form.control} name="role" render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
@@ -167,7 +165,6 @@ export default function InscriptionPage() {
                                 </div>
                               )}
                               <div className="relative">
-                                <div className="text-2xl mb-1">{choice.emoji}</div>
                                 <p className="font-bold text-sm">{choice.title}</p>
                                 <p className="text-[11px] text-muted-foreground leading-tight">
                                   {choice.desc}
@@ -175,7 +172,7 @@ export default function InscriptionPage() {
                               </div>
                             </button>
                           );
-                        })}
+                        })}  
                       </div>
                     </FormItem>
                   )} />
@@ -293,7 +290,7 @@ export default function InscriptionPage() {
 }
 
 // ============================================================
-// AuthHeroPanel — identique à celui de la page Connexion
+// AuthHeroPanel  identique à celui de la page Connexion
 // (dupliqué ici pour que les deux fichiers restent indépendants ;
 // tu peux extraire dans un fichier partagé si tu préfères)
 // ============================================================
@@ -362,7 +359,7 @@ function FeatureRow({ icon: Icon, text }: { icon: any; text: string }) {
 }
 
 // ============================================================
-// PasswordStrength — barre visuelle de robustesse
+// PasswordStrength  barre visuelle de robustesse
 // ============================================================
 function PasswordStrength({ password }: { password: string }) {
   // Score simple : longueur, chiffres, majuscules, caractères spéciaux

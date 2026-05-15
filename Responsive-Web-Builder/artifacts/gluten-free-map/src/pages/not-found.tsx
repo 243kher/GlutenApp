@@ -15,7 +15,7 @@ export default function NotFound() {
 
       <div className="relative w-full max-w-lg text-center">
         {/* ========================================================
-            CHIFFRE 404 — énorme, en dégradé
+            CHIFFRE 404  énorme, en dégradé
             ======================================================== */}
         <div className="relative mb-6">
           {/* Halo derrière le chiffre */}
@@ -55,7 +55,7 @@ export default function NotFound() {
         </div>
 
         {/* ========================================================
-            ACTIONS — CTA principal + retour
+            ACTIONS CTA principal + retour
             ======================================================== */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 mb-8">
           <Link href="/" className="w-full sm:w-auto">
@@ -79,7 +79,7 @@ export default function NotFound() {
         </div>
 
         {/* ========================================================
-            SUGGESTIONS — liens vers les sections principales
+            SUGGESTIONS  liens vers les sections principales
             ======================================================== */}
         <div className="relative bg-card/40 backdrop-blur-xl border border-border/40 rounded-3xl p-5">
           <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
@@ -103,7 +103,7 @@ export default function NotFound() {
         </div>
       </div>
 
-      {/* Animation pour la boussole — déclaration locale via style tag */}
+      {/* Animation pour la boussole déclaration locale via style tag */}
       <style>{`
         @keyframes bounce-slow {
           0%, 100% { transform: translateY(0) rotate(12deg); }
@@ -118,7 +118,7 @@ export default function NotFound() {
 }
 
 // ============================================================
-// SuggestionLink — carte cliquable vers une section
+// SuggestionLink  carte cliquable vers une section
 // ============================================================
 function SuggestionLink({
   href, icon: Icon, title, desc,

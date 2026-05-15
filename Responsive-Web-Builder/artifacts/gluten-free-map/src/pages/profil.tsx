@@ -105,7 +105,7 @@ export default function ProfilPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 md:py-10 pb-24 md:pb-10">
       {/* ========================================================
-          HERO PROFIL — carte d'identité immersive
+          HERO PROFIL carte d'identité immersive
           ======================================================== */}
       <div className="relative mb-6 rounded-3xl overflow-hidden">
         {/* Bandeau dégradé selon le rôle */}
@@ -147,7 +147,7 @@ export default function ProfilPage() {
               </p>
             </div>
 
-            {/* Bouton éditer — visible sur desktop, en bas sur mobile */}
+            {/* Bouton éditer  visible sur desktop, en bas sur mobile */}
             <div className="sm:self-start">
               <Button
                 variant="outline"
@@ -246,7 +246,7 @@ export default function ProfilPage() {
       )}
 
       {/* ========================================================
-          STATS — cartes de stats avec icônes colorées
+          STATS  cartes de stats avec icônes colorées
           ======================================================== */}
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
         <StatCard icon={MapPin}        label="Établissements"  value="0" color="green" />
@@ -255,7 +255,7 @@ export default function ProfilPage() {
       </div>
 
       {/* ========================================================
-          SECTION COMPTE — déconnexion
+          SECTION COMPTE  déconnexion
           ======================================================== */}
       <div className="relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl p-5 md:p-6 shadow-sm">
         <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
@@ -278,7 +278,7 @@ export default function ProfilPage() {
 }
 
 // ============================================================
-// StatCard — carte de stat avec icône colorée et hover
+// StatCard  carte de stat avec icône colorée et hover
 // ============================================================
 function StatCard({
   icon: Icon, label, value, color,
