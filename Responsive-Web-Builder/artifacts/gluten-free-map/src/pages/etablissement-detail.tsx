@@ -133,6 +133,9 @@ export default function EtablissementDetailPage() {
   const reviews = (reviewsData as any)?.reviews ?? [];
   const reviewsTotal = (reviewsData as any)?.total ?? 0;
 
+  console.log(" reviewsData:", reviewsData);
+  console.log(" reviews:", reviews, "total:", reviewsTotal);
+
   function handleToggleFav() {
     if (!user) {
       toast({

@@ -765,7 +765,7 @@ export default function HomePage() {
   const userLng = geoState.status === "success" ? geoState.lng : undefined;
   const nearbyMode = geoState.status === "success";
 
-  const params: any = { limit: 50 };
+  const params: any = { limit: 1000 };
   if (search) params.search = search;
   if (type) params.type = type;
   if (safeCeliac) params.safeCeliac = true;

@@ -57,8 +57,8 @@ router.get("/establishments/:id/reviews", async (req, res): Promise<void> => {
 
   const userIds = [...new Set(paginated.map((r) => r.userId))];
   const users = userIds.length > 0
-    ? await db.select().from(usersTable).where(sql`${usersTable.id} = ANY(${userIds})`)
-    : [];
+  ? await db.select().from(usersTable).where(inArray(usersTable.id, userIds))
+  : [];
   const userMap = Object.fromEntries(users.map((u) => [u.id, u]));
 
   const result = paginated.map((r) => buildReview(r, userMap[r.userId]));
