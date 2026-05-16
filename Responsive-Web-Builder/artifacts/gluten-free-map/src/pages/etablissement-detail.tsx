@@ -227,12 +227,15 @@ export default function EtablissementDetailPage() {
             queryKey: getGetEstablishmentQueryKey(id),
           });
         },
-        onError: () =>
-          toast({
-            title: "Erreur",
-            description: "Impossible de publier l'avis",
-            variant: "destructive",
-          }),
+        onError: (err: any) => {
+          console.error("Review error:", err);
+          const msg =
+            err?.data?.error ??
+            err?.response?.data?.error ??
+            err?.message ??
+            "Impossible de publier l'avis";
+          toast({ title: "Erreur", description: msg, variant: "destructive" });
+        },
       },
     );
   }
