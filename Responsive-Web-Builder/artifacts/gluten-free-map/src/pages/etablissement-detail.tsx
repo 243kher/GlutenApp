@@ -80,12 +80,12 @@ export default function EtablissementDetailPage() {
     query: { queryKey: getGetEstablishmentQueryKey(id), enabled: !!id },
   });
   const { data: reviewsData, isLoading: reviewsLoading } = useListReviews(
-    id,
-    {},
-    {
-      query: { queryKey: getListReviewsQueryKey(id, {}), enabled: !!id },
-    },
-  );
+  id,
+  undefined,
+  {
+    query: { queryKey: getListReviewsQueryKey(id), enabled: !!id },
+  },
+);
 
   const toggleFav = useToggleFavoriteEstablishment();
   const verifyMut = useVerifyEstablishment();
@@ -221,7 +221,7 @@ export default function EtablissementDetailPage() {
           setCrossAlert(false);
           setReviewOpen(false);
           queryClient.invalidateQueries({
-            queryKey: getListReviewsQueryKey(id, {}),
+            queryKey: getListReviewsQueryKey(id),
           });
           queryClient.invalidateQueries({
             queryKey: getGetEstablishmentQueryKey(id),
