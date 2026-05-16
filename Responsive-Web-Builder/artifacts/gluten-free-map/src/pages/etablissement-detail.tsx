@@ -1,17 +1,35 @@
 import { useState } from "react";
 import { useParams, Link } from "wouter";
 import {
-  MapPin, Phone, Globe, Clock, Heart, Flag, MessageSquare,
-  AlertTriangle, ArrowLeft, Check, Share2, Star, Navigation,
+  MapPin,
+  Phone,
+  Globe,
+  Clock,
+  Heart,
+  Flag,
+  MessageSquare,
+  AlertTriangle,
+  ArrowLeft,
+  Check,
+  Share2,
+  Star,
+  Navigation,
 } from "lucide-react";
 import {
-  useGetEstablishment, getGetEstablishmentQueryKey,
-  useListReviews, getListReviewsQueryKey,
-  useCreateReview, useToggleFavoriteEstablishment,
-  useVerifyEstablishment, useReportEstablishment,
+  useGetEstablishment,
+  getGetEstablishmentQueryKey,
+  useListReviews,
+  getListReviewsQueryKey,
+  useCreateReview,
+  useToggleFavoriteEstablishment,
+  useVerifyEstablishment,
+  useReportEstablishment,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { VerificationBadge, SafeCeliacBadge } from "@/components/VerificationBadge";
+import {
+  VerificationBadge,
+  SafeCeliacBadge,
+} from "@/components/VerificationBadge";
 import { StarRating, InteractiveStarRating } from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,18 +39,34 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 
 const typeLabels: Record<string, string> = {
-  restaurant: "Restaurant", bakery: "Boulangerie", grocery: "Épicerie", cafe: "Café", other: "Autre",
+  restaurant: "Restaurant",
+  bakery: "Boulangerie",
+  grocery: "Épicerie",
+  cafe: "Café",
+  other: "Autre",
 };
 
 const typeEmojis: Record<string, string> = {
-  restaurant: "🍽", bakery: "🥖", grocery: "🛒", cafe: "☕", other: "📍",
+  restaurant: "🍽",
+  bakery: "🥖",
+  grocery: "🛒",
+  cafe: "☕",
+  other: "📍",
 };
 
 export default function EtablissementDetailPage() {
@@ -45,9 +79,13 @@ export default function EtablissementDetailPage() {
   const { data: establishment, isLoading } = useGetEstablishment(id, {
     query: { queryKey: getGetEstablishmentQueryKey(id), enabled: !!id },
   });
-  const { data: reviewsData, isLoading: reviewsLoading } = useListReviews(id, {}, {
-    query: { queryKey: getListReviewsQueryKey(id, {}), enabled: !!id },
-  });
+  const { data: reviewsData, isLoading: reviewsLoading } = useListReviews(
+    id,
+    {},
+    {
+      query: { queryKey: getListReviewsQueryKey(id, {}), enabled: !!id },
+    },
+  );
 
   const toggleFav = useToggleFavoriteEstablishment();
   const verifyMut = useVerifyEstablishment();
@@ -83,7 +121,9 @@ export default function EtablissementDetailPage() {
         </div>
         <p className="text-muted-foreground mb-4">Établissement non trouvé.</p>
         <Link href="/etablissements">
-          <Button variant="outline" className="rounded-full">Retour aux établissements</Button>
+          <Button variant="outline" className="rounded-full">
+            Retour aux établissements
+          </Button>
         </Link>
       </div>
     );
@@ -95,53 +135,125 @@ export default function EtablissementDetailPage() {
 
   function handleToggleFav() {
     if (!user) {
-      toast({ title: "Connexion requise", description: "Connectez-vous pour ajouter des favoris", variant: "destructive" });
+      toast({
+        title: "Connexion requise",
+        description: "Connectez-vous pour ajouter des favoris",
+        variant: "destructive",
+      });
       return;
     }
-    toggleFav.mutate({ id }, {
-      onSuccess: (data: any) => {
-        toast({ title: data.isFavorited ? "Ajouté aux favoris" : "Retiré des favoris" });
-        queryClient.invalidateQueries({ queryKey: getGetEstablishmentQueryKey(id) });
+    toggleFav.mutate(
+      { id },
+      {
+        onSuccess: (data: any) => {
+          toast({
+            title: data.isFavorited
+              ? "Ajouté aux favoris"
+              : "Retiré des favoris",
+          });
+          queryClient.invalidateQueries({
+            queryKey: getGetEstablishmentQueryKey(id),
+          });
+        },
       },
-    });
+    );
   }
 
   function handleVerify() {
-    if (!user) { toast({ title: "Connexion requise", variant: "destructive" }); return; }
-    verifyMut.mutate({ id }, {
-      onSuccess: () => {
-        toast({ title: "Vérification enregistrée", description: "Merci pour votre contribution !" });
-        queryClient.invalidateQueries({ queryKey: getGetEstablishmentQueryKey(id) });
+    if (!user) {
+      toast({ title: "Connexion requise", variant: "destructive" });
+      return;
+    }
+    verifyMut.mutate(
+      { id },
+      {
+        onSuccess: (data: any) => {
+          if (data?.alreadyVerified) {
+            toast({
+              title: "Déjà vérifié",
+              description: "Vous avez déjà vérifié cet établissement.",
+            });
+          } else {
+            toast({
+              title: "Vérification enregistrée",
+              description: "Merci pour votre contribution !",
+            });
+            queryClient.invalidateQueries({
+              queryKey: getGetEstablishmentQueryKey(id),
+            });
+          }
+        },
+        onError: (err: any) => {
+          console.error("Verify error:", err);
+          const msg =
+            err?.data?.error ??
+            err?.response?.data?.error ??
+            err?.message ??
+            "Erreur inconnue";
+          toast({ title: "Erreur", description: msg, variant: "destructive" });
+        },
       },
-    });
+    );
   }
 
   function handleSubmitReview() {
-    if (!user) { toast({ title: "Connexion requise", variant: "destructive" }); return; }
+    if (!user) {
+      toast({ title: "Connexion requise", variant: "destructive" });
+      return;
+    }
     createReview.mutate(
-      { id, data: { rating: reviewRating, comment: reviewComment || undefined, crossContaminationAlert: crossAlert } },
+      {
+        id,
+        data: {
+          rating: reviewRating,
+          comment: reviewComment || undefined,
+          crossContaminationAlert: crossAlert,
+        },
+      },
       {
         onSuccess: () => {
-          toast({ title: "Avis publié", description: "Merci pour votre retour !" });
-          setReviewComment(""); setReviewRating(5); setCrossAlert(false); setReviewOpen(false);
-          queryClient.invalidateQueries({ queryKey: getListReviewsQueryKey(id, {}) });
-          queryClient.invalidateQueries({ queryKey: getGetEstablishmentQueryKey(id) });
+          toast({
+            title: "Avis publié",
+            description: "Merci pour votre retour !",
+          });
+          setReviewComment("");
+          setReviewRating(5);
+          setCrossAlert(false);
+          setReviewOpen(false);
+          queryClient.invalidateQueries({
+            queryKey: getListReviewsQueryKey(id, {}),
+          });
+          queryClient.invalidateQueries({
+            queryKey: getGetEstablishmentQueryKey(id),
+          });
         },
-        onError: () => toast({ title: "Erreur", description: "Impossible de publier l'avis", variant: "destructive" }),
-      }
+        onError: () =>
+          toast({
+            title: "Erreur",
+            description: "Impossible de publier l'avis",
+            variant: "destructive",
+          }),
+      },
     );
   }
 
   function handleReport() {
-    if (!user) { toast({ title: "Connexion requise", variant: "destructive" }); return; }
+    if (!user) {
+      toast({ title: "Connexion requise", variant: "destructive" });
+      return;
+    }
     reportMut.mutate(
       { id, data: { type: reportType as any, description: reportDesc } },
       {
         onSuccess: () => {
-          toast({ title: "Signalement envoyé", description: "Notre équipe l'examinera prochainement." });
-          setReportDesc(""); setReportOpen(false);
+          toast({
+            title: "Signalement envoyé",
+            description: "Notre équipe l'examinera prochainement.",
+          });
+          setReportDesc("");
+          setReportOpen(false);
         },
-      }
+      },
     );
   }
 
@@ -179,7 +291,11 @@ export default function EtablissementDetailPage() {
 
         <div className="relative h-56 md:h-72 bg-gradient-to-br from-primary/10 via-accent to-primary/5">
           {e.photoUrl ? (
-            <img src={e.photoUrl} alt={e.name} className="w-full h-full object-cover" />
+            <img
+              src={e.photoUrl}
+              alt={e.name}
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <span className="text-7xl md:text-8xl opacity-30">
@@ -206,7 +322,9 @@ export default function EtablissementDetailPage() {
               className="w-10 h-10 rounded-full backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center hover:bg-white/30 transition-colors shadow-lg"
               aria-label="Favori"
             >
-              <Heart className={`w-4 h-4 transition-all ${e.isFavorited ? "fill-red-500 text-red-500 scale-110" : "text-white"}`} />
+              <Heart
+                className={`w-4 h-4 transition-all ${e.isFavorited ? "fill-red-500 text-red-500 scale-110" : "text-white"}`}
+              />
             </button>
           </div>
 
@@ -251,7 +369,9 @@ export default function EtablissementDetailPage() {
         {/* Infos contact en grille */}
         <div className="space-y-2 mb-4">
           <InfoRow icon={MapPin} text={`${e.address}, ${e.city}`} />
-          {e.phone && <InfoRow icon={Phone} text={e.phone} href={`tel:${e.phone}`} />}
+          {e.phone && (
+            <InfoRow icon={Phone} text={e.phone} href={`tel:${e.phone}`} />
+          )}
           {e.website && (
             <InfoRow
               icon={Globe}
@@ -277,7 +397,9 @@ export default function EtablissementDetailPage() {
               <span className="text-base">🌾</span>
               Menu sans gluten
             </h3>
-            <p className="text-sm text-foreground/80 leading-relaxed">{e.glutenFreeMenu}</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">
+              {e.glutenFreeMenu}
+            </p>
           </div>
         )}
 
@@ -293,7 +415,9 @@ export default function EtablissementDetailPage() {
           >
             <Check className="w-4 h-4 text-green-600" />
             Vérifier
-            <span className="text-xs text-muted-foreground">({e.verificationCount})</span>
+            <span className="text-xs text-muted-foreground">
+              ({e.verificationCount})
+            </span>
           </Button>
 
           <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
@@ -308,9 +432,12 @@ export default function EtablissementDetailPage() {
               </Button>
             </DialogTrigger>
             <ReviewDialogContent
-              reviewRating={reviewRating} setReviewRating={setReviewRating}
-              reviewComment={reviewComment} setReviewComment={setReviewComment}
-              crossAlert={crossAlert} setCrossAlert={setCrossAlert}
+              reviewRating={reviewRating}
+              setReviewRating={setReviewRating}
+              reviewComment={reviewComment}
+              setReviewComment={setReviewComment}
+              crossAlert={crossAlert}
+              setCrossAlert={setCrossAlert}
               handleSubmitReview={handleSubmitReview}
               isPending={createReview.isPending}
             />
@@ -329,8 +456,10 @@ export default function EtablissementDetailPage() {
               </Button>
             </DialogTrigger>
             <ReportDialogContent
-              reportType={reportType} setReportType={setReportType}
-              reportDesc={reportDesc} setReportDesc={setReportDesc}
+              reportType={reportType}
+              setReportType={setReportType}
+              reportDesc={reportDesc}
+              setReportDesc={setReportDesc}
               handleReport={handleReport}
               isPending={reportMut.isPending}
             />
@@ -383,7 +512,9 @@ export default function EtablissementDetailPage() {
                       {(r.userName || "?").charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium text-sm leading-tight">{r.userName}</p>
+                      <p className="font-medium text-sm leading-tight">
+                        {r.userName}
+                      </p>
                       <div className="mt-0.5">
                         <StarRating rating={r.rating} />
                       </div>
@@ -400,7 +531,9 @@ export default function EtablissementDetailPage() {
                   </div>
                 )}
                 {r.comment && (
-                  <p className="text-sm text-foreground/80 leading-relaxed">{r.comment}</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed">
+                    {r.comment}
+                  </p>
                 )}
               </div>
             ))}
@@ -438,9 +571,12 @@ export default function EtablissementDetailPage() {
               </Button>
             </DialogTrigger>
             <ReviewDialogContent
-              reviewRating={reviewRating} setReviewRating={setReviewRating}
-              reviewComment={reviewComment} setReviewComment={setReviewComment}
-              crossAlert={crossAlert} setCrossAlert={setCrossAlert}
+              reviewRating={reviewRating}
+              setReviewRating={setReviewRating}
+              reviewComment={reviewComment}
+              setReviewComment={setReviewComment}
+              crossAlert={crossAlert}
+              setCrossAlert={setCrossAlert}
               handleSubmitReview={handleSubmitReview}
               isPending={createReview.isPending}
             />
@@ -457,8 +593,10 @@ export default function EtablissementDetailPage() {
               </button>
             </DialogTrigger>
             <ReportDialogContent
-              reportType={reportType} setReportType={setReportType}
-              reportDesc={reportDesc} setReportDesc={setReportDesc}
+              reportType={reportType}
+              setReportType={setReportType}
+              reportDesc={reportDesc}
+              setReportDesc={setReportDesc}
               handleReport={handleReport}
               isPending={reportMut.isPending}
             />
@@ -476,14 +614,24 @@ export default function EtablissementDetailPage() {
 // Ligne d'info  icône + texte (+ lien optionnel)
 // ============================================================
 function InfoRow({
-  icon: Icon, text, href, external,
-}: { icon: any; text: string; href?: string; external?: boolean }) {
+  icon: Icon,
+  text,
+  href,
+  external,
+}: {
+  icon: any;
+  text: string;
+  href?: string;
+  external?: boolean;
+}) {
   const content = (
     <>
       <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/10 text-primary flex-shrink-0">
         <Icon className="w-4 h-4" />
       </span>
-      <span className={`text-sm flex-1 min-w-0 truncate ${href ? "text-foreground hover:text-primary transition-colors" : "text-foreground/80"}`}>
+      <span
+        className={`text-sm flex-1 min-w-0 truncate ${href ? "text-foreground hover:text-primary transition-colors" : "text-foreground/80"}`}
+      >
         {text}
       </span>
     </>
@@ -502,15 +650,20 @@ function InfoRow({
     );
   }
   return <div className="flex items-center gap-3">{content}</div>;
-
 }
 
 // ============================================================
 // Dialog "ajouter un avis"  extrait pour réutilisation desktop/mobile
 // ============================================================
 function ReviewDialogContent({
-  reviewRating, setReviewRating, reviewComment, setReviewComment,
-  crossAlert, setCrossAlert, handleSubmitReview, isPending,
+  reviewRating,
+  setReviewRating,
+  reviewComment,
+  setReviewComment,
+  crossAlert,
+  setCrossAlert,
+  handleSubmitReview,
+  isPending,
 }: any) {
   return (
     <DialogContent className="rounded-3xl border-border/40 backdrop-blur-xl bg-card/95">
@@ -522,10 +675,16 @@ function ReviewDialogContent({
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
             Votre note
           </Label>
-          <InteractiveStarRating value={reviewRating} onChange={setReviewRating} />
+          <InteractiveStarRating
+            value={reviewRating}
+            onChange={setReviewRating}
+          />
         </div>
         <div>
-          <Label htmlFor="review-comment" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+          <Label
+            htmlFor="review-comment"
+            className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block"
+          >
             Commentaire (optionnel)
           </Label>
           <Textarea
@@ -538,8 +697,16 @@ function ReviewDialogContent({
           />
         </div>
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-950/50 dark:to-orange-900/30 border border-orange-200/50 dark:border-orange-800/50">
-          <Switch checked={crossAlert} onCheckedChange={setCrossAlert} id="cross-alert" data-testid="switch-cross-alert" />
-          <Label htmlFor="cross-alert" className="text-sm text-orange-700 dark:text-orange-300 cursor-pointer flex items-center gap-1.5">
+          <Switch
+            checked={crossAlert}
+            onCheckedChange={setCrossAlert}
+            id="cross-alert"
+            data-testid="switch-cross-alert"
+          />
+          <Label
+            htmlFor="cross-alert"
+            className="text-sm text-orange-700 dark:text-orange-300 cursor-pointer flex items-center gap-1.5"
+          >
             <AlertTriangle className="w-4 h-4" />
             Signaler une contamination croisée
           </Label>
@@ -561,7 +728,12 @@ function ReviewDialogContent({
 // Dialog "signaler"  extrait pour réutilisation desktop/mobile
 // ============================================================
 function ReportDialogContent({
-  reportType, setReportType, reportDesc, setReportDesc, handleReport, isPending,
+  reportType,
+  setReportType,
+  reportDesc,
+  setReportDesc,
+  handleReport,
+  isPending,
 }: any) {
   return (
     <DialogContent className="rounded-3xl border-border/40 backdrop-blur-xl bg-card/95">
@@ -577,19 +749,29 @@ function ReportDialogContent({
             Type de problème
           </Label>
           <Select value={reportType} onValueChange={setReportType}>
-            <SelectTrigger className="rounded-xl bg-background/50 backdrop-blur border-border/50" data-testid="select-report-type">
+            <SelectTrigger
+              className="rounded-xl bg-background/50 backdrop-blur border-border/50"
+              data-testid="select-report-type"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="cross_contamination">Contamination croisée</SelectItem>
-              <SelectItem value="wrong_info">Informations incorrectes</SelectItem>
+              <SelectItem value="cross_contamination">
+                Contamination croisée
+              </SelectItem>
+              <SelectItem value="wrong_info">
+                Informations incorrectes
+              </SelectItem>
               <SelectItem value="closed">Établissement fermé</SelectItem>
               <SelectItem value="other">Autre</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <Label htmlFor="report-desc" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+          <Label
+            htmlFor="report-desc"
+            className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block"
+          >
             Description
           </Label>
           <Textarea
