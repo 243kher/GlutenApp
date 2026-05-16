@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, inArray } from "drizzle-orm";
 import { db, reviewsTable, establishmentsTable, usersTable } from "@workspace/db";
 import { CreateReviewBody, UpdateReviewBody, ListReviewsQueryParams } from "@workspace/api-zod";
 import { getUserFromRequest } from "./auth";
