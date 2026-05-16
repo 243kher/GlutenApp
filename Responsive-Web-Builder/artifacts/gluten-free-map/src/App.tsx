@@ -23,7 +23,6 @@ import AdminPage from "@/pages/admin";
 import ConnexionPage from "@/pages/connexion";
 import InscriptionPage from "@/pages/inscription";
 import { Leaf } from "lucide-react";
-import { setAuthTokenGetter, setBaseUrl } from "@workspace/api-client-react";
 
 
 const queryClient = new QueryClient({
@@ -35,7 +34,6 @@ const queryClient = new QueryClient({
   },
 });
 
-setAuthTokenGetter(() => localStorage.getItem("token"));
 
 
 function Router() {
