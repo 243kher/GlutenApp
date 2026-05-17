@@ -104,7 +104,11 @@ export default function ConnexionPage() {
               <div className="relative inline-block mb-3">
                 <div className="absolute inset-0 bg-primary/40 blur-2xl rounded-full" />
                 <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-xl shadow-primary/30">
-                  <Leaf className="w-7 h-7 text-primary-foreground" />
+                  <img
+                    src="/glutenapp2.png" 
+                    alt="Logo Gluten Free" 
+                    className="w-8 h-8 object-contain relative" 
+                  />
                 </div>
               </div>
               <h1 className="text-2xl font-bold tracking-tight">
@@ -285,7 +289,11 @@ function AuthHeroPanel({
           <div className="relative">
             <div className="absolute inset-0 bg-primary/40 blur-md rounded-full group-hover:bg-primary/60 transition-colors" />
             <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/30">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
+              <img
+                    src="/glutenapp2.png" 
+                    alt="Logo Gluten Free" 
+                    className="w-8 h-8 object-contain relative" 
+                  />
             </div>
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
