@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Search, ShoppingBag, BadgeCheck, X, Sparkles,
   ChevronLeft, ChevronRight, Package,
+  Link,
 } from "lucide-react";
 import { useListProducts, getListProductsQueryKey } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
@@ -254,6 +255,11 @@ function ProductCard({ product }: { product: any }) {
   const cfg = categoryConfig[product.category] ?? fallbackCategory;
 
   return (
+    <Link href={`/produits/${product.id}`}>
+      
+        className="group relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300 block cursor-pointer"
+        data-testid={`card-product-${product.id}`}
+      >
     <div
       className="group relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300"
       data-testid={`card-product-${product.id}`}
@@ -309,7 +315,7 @@ function ProductCard({ product }: { product: any }) {
           </p>
         )}
       </div>
-    </div>
+    </div></Link>
   );
 }
 

@@ -614,7 +614,102 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /products/{id}/establishments:
+    get:
+      operationId: listProductEstablishments
+      tags: [products]
+      summary: List establishments selling this product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of establishments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductEstablishmentListResponse"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
+    post:
+      operationId: linkProductEstablishment
+      tags: [products]
+      summary: Link an establishment to a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkProductEstablishmentBody"
+      responses:
+        "201":
+          description: Link created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkProductEstablishmentResponse"
+        "200":
+          description: Already linked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkProductEstablishmentResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Product or establishment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /products/{id}/establishments/{establishmentId}:
+    delete:
+      operationId: unlinkProductEstablishment
+      tags: [products]
+      summary: Unlink an establishment from a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: establishmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Link removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   # Stats (wow endpoints)
   /stats:
     get:
@@ -1284,3 +1379,68 @@ components:
           type: ["string", "null"]
       required:
         - action
+
+    # Product ↔ Establishment links
+    ProductEstablishmentItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [restaurant, bakery, grocery, cafe, other]
+        address:
+          type: string
+        city:
+          type: string
+        verificationLevel:
+          type: string
+          enum: [unverified, community, certified]
+        safeCeliac:
+          type: boolean
+        photoUrl:
+          type: ["string", "null"]
+      required:
+        - id
+        - name
+        - type
+        - address
+        - city
+        - verificationLevel
+        - safeCeliac
+
+    ProductEstablishmentListResponse:
+      type: object
+      properties:
+        establishments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductEstablishmentItem"
+        total:
+          type: integer
+      required:
+        - establishments
+        - total
+
+    LinkProductEstablishmentBody:
+      type: object
+      properties:
+        establishmentId:
+          type: integer
+          minimum: 1
+      required:
+        - establishmentId
+
+    LinkProductEstablishmentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        alreadyLinked:
+          type: boolean
+        message:
+          type: ["string", "null"]
+      required:
+        - success

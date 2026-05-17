@@ -549,3 +549,4 @@ export const ModerateEstablishmentResponse = zod.object({
   success: zod.boolean(),
   message: zod.string().nullish(),
 });
+ 
