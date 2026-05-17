@@ -370,6 +370,55 @@ export interface ModerateEstablishmentBody {
   note?: string | null;
 }
 
+export type ProductEstablishmentItemType =
+  (typeof ProductEstablishmentItemType)[keyof typeof ProductEstablishmentItemType];
+
+export const ProductEstablishmentItemType = {
+  restaurant: "restaurant",
+  bakery: "bakery",
+  grocery: "grocery",
+  cafe: "cafe",
+  other: "other",
+} as const;
+
+export type ProductEstablishmentItemVerificationLevel =
+  (typeof ProductEstablishmentItemVerificationLevel)[keyof typeof ProductEstablishmentItemVerificationLevel];
+
+export const ProductEstablishmentItemVerificationLevel = {
+  unverified: "unverified",
+  community: "community",
+  certified: "certified",
+} as const;
+
+export interface ProductEstablishmentItem {
+  id: number;
+  name: string;
+  type: ProductEstablishmentItemType;
+  address: string;
+  city: string;
+  verificationLevel: ProductEstablishmentItemVerificationLevel;
+  safeCeliac: boolean;
+  /** @nullable */
+  photoUrl?: string | null;
+}
+
+export interface ProductEstablishmentListResponse {
+  establishments: ProductEstablishmentItem[];
+  total: number;
+}
+
+export interface LinkProductEstablishmentBody {
+  /** @minimum 1 */
+  establishmentId: number;
+}
+
+export interface LinkProductEstablishmentResponse {
+  success: boolean;
+  alreadyLinked?: boolean;
+  /** @nullable */
+  message?: string | null;
+}
+
 export type ListEstablishmentsParams = {
   /**
    * @nullable

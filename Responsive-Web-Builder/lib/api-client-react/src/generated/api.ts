@@ -29,6 +29,8 @@ import type {
   FavoriteResponse,
   GetRecentActivityParams,
   HealthStatus,
+  LinkProductEstablishmentBody,
+  LinkProductEstablishmentResponse,
   ListEstablishmentsParams,
   ListProductsParams,
   ListReportsParams,
@@ -37,6 +39,7 @@ import type {
   ModerateEstablishmentBody,
   PlatformStats,
   Product,
+  ProductEstablishmentListResponse,
   ProductListResponse,
   RegisterBody,
   Report,
@@ -1873,6 +1876,280 @@ export function useGetProduct<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List establishments selling this product
+ */
+export const getListProductEstablishmentsUrl = (id: number) => {
+  return `/api/products/${id}/establishments`;
+};
+
+export const listProductEstablishments = async (
+  id: number,
+  options?: RequestInit,
+): Promise<ProductEstablishmentListResponse> => {
+  return customFetch<ProductEstablishmentListResponse>(
+    getListProductEstablishmentsUrl(id),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getListProductEstablishmentsQueryKey = (id: number) => {
+  return [`/api/products/${id}/establishments`] as const;
+};
+
+export const getListProductEstablishmentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listProductEstablishments>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProductEstablishments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListProductEstablishmentsQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listProductEstablishments>>
+  > = ({ signal }) =>
+    listProductEstablishments(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listProductEstablishments>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListProductEstablishmentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listProductEstablishments>>
+>;
+export type ListProductEstablishmentsQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary List establishments selling this product
+ */
+
+export function useListProductEstablishments<
+  TData = Awaited<ReturnType<typeof listProductEstablishments>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProductEstablishments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListProductEstablishmentsQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Link an establishment to a product
+ */
+export const getLinkProductEstablishmentUrl = (id: number) => {
+  return `/api/products/${id}/establishments`;
+};
+
+export const linkProductEstablishment = async (
+  id: number,
+  linkProductEstablishmentBody: LinkProductEstablishmentBody,
+  options?: RequestInit,
+): Promise<LinkProductEstablishmentResponse> => {
+  return customFetch<LinkProductEstablishmentResponse>(
+    getLinkProductEstablishmentUrl(id),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(linkProductEstablishmentBody),
+    },
+  );
+};
+
+export const getLinkProductEstablishmentMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof linkProductEstablishment>>,
+    TError,
+    { id: number; data: BodyType<LinkProductEstablishmentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof linkProductEstablishment>>,
+  TError,
+  { id: number; data: BodyType<LinkProductEstablishmentBody> },
+  TContext
+> => {
+  const mutationKey = ["linkProductEstablishment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof linkProductEstablishment>>,
+    { id: number; data: BodyType<LinkProductEstablishmentBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return linkProductEstablishment(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LinkProductEstablishmentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof linkProductEstablishment>>
+>;
+export type LinkProductEstablishmentMutationBody =
+  BodyType<LinkProductEstablishmentBody>;
+export type LinkProductEstablishmentMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Link an establishment to a product
+ */
+export const useLinkProductEstablishment = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof linkProductEstablishment>>,
+    TError,
+    { id: number; data: BodyType<LinkProductEstablishmentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof linkProductEstablishment>>,
+  TError,
+  { id: number; data: BodyType<LinkProductEstablishmentBody> },
+  TContext
+> => {
+  return useMutation(getLinkProductEstablishmentMutationOptions(options));
+};
+
+/**
+ * @summary Unlink an establishment from a product
+ */
+export const getUnlinkProductEstablishmentUrl = (
+  id: number,
+  establishmentId: number,
+) => {
+  return `/api/products/${id}/establishments/${establishmentId}`;
+};
+
+export const unlinkProductEstablishment = async (
+  id: number,
+  establishmentId: number,
+  options?: RequestInit,
+): Promise<SuccessResponse> => {
+  return customFetch<SuccessResponse>(
+    getUnlinkProductEstablishmentUrl(id, establishmentId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getUnlinkProductEstablishmentMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unlinkProductEstablishment>>,
+    TError,
+    { id: number; establishmentId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unlinkProductEstablishment>>,
+  TError,
+  { id: number; establishmentId: number },
+  TContext
+> => {
+  const mutationKey = ["unlinkProductEstablishment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unlinkProductEstablishment>>,
+    { id: number; establishmentId: number }
+  > = (props) => {
+    const { id, establishmentId } = props ?? {};
+
+    return unlinkProductEstablishment(id, establishmentId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnlinkProductEstablishmentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unlinkProductEstablishment>>
+>;
+
+export type UnlinkProductEstablishmentMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Unlink an establishment from a product
+ */
+export const useUnlinkProductEstablishment = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unlinkProductEstablishment>>,
+    TError,
+    { id: number; establishmentId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unlinkProductEstablishment>>,
+  TError,
+  { id: number; establishmentId: number },
+  TContext
+> => {
+  return useMutation(getUnlinkProductEstablishmentMutationOptions(options));
+};
 
 /**
  * @summary Get overall platform statistics

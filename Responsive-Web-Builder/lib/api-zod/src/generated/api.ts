@@ -444,6 +444,59 @@ export const GetProductResponse = zod.object({
 });
 
 /**
+ * @summary List establishments selling this product
+ */
+export const ListProductEstablishmentsParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const ListProductEstablishmentsResponse = zod.object({
+  establishments: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      type: zod.enum(["restaurant", "bakery", "grocery", "cafe", "other"]),
+      address: zod.string(),
+      city: zod.string(),
+      verificationLevel: zod.enum(["unverified", "community", "certified"]),
+      safeCeliac: zod.boolean(),
+      photoUrl: zod.string().nullish(),
+    }),
+  ),
+  total: zod.number(),
+});
+
+/**
+ * @summary Link an establishment to a product
+ */
+export const LinkProductEstablishmentParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const LinkProductEstablishmentBody = zod.object({
+  establishmentId: zod.number().min(1),
+});
+
+export const LinkProductEstablishmentResponse = zod.object({
+  success: zod.boolean(),
+  alreadyLinked: zod.boolean().optional(),
+  message: zod.string().nullish(),
+});
+
+/**
+ * @summary Unlink an establishment from a product
+ */
+export const UnlinkProductEstablishmentParams = zod.object({
+  id: zod.coerce.number(),
+  establishmentId: zod.coerce.number(),
+});
+
+export const UnlinkProductEstablishmentResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().nullish(),
+});
+
+/**
  * @summary Get overall platform statistics
  */
 export const GetPlatformStatsResponse = zod.object({
@@ -549,4 +602,3 @@ export const ModerateEstablishmentResponse = zod.object({
   success: zod.boolean(),
   message: zod.string().nullish(),
 });
- 
