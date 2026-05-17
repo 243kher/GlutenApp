@@ -550,7 +550,7 @@ function DesktopHeroBar({
             )}
           </div>
 
-          {/* Bouton "Près de moi" */}
+          {/* Bouton "Près de moi" 
           <button
             onClick={nearbyMode ? resetGeo : locate}
             disabled={geoState.status === "loading"}
@@ -574,7 +574,7 @@ function DesktopHeroBar({
               {nearbyMode ? "Près de moi" : "Me localiser"}
               {nearbyMode && <X className="w-3 h-3 ml-1 opacity-70" />}
             </span>
-          </button>
+          </button>*/}
 
           {/* Compteur de résultats à droite */}
           <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
@@ -1016,12 +1016,13 @@ export default function HomePage() {
                         {e.averageRating.toFixed(1)}/5 ({e.reviewCount} avis)
                       </p>
                     )}
-                    <a
-                      href={`/etablissements/${e.id}`}
+                    <Link href={`/etablissements/${selected.id}`}>
+                     <div
                       className="text-xs text-green-600 hover:underline font-medium mt-1 block"
                     >
                       Voir la fiche →
-                    </a>
+                      </div>
+                    </Link>
                   </div>
                 </Popup>
               </Marker>
