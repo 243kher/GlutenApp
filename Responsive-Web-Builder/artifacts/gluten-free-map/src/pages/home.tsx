@@ -88,7 +88,6 @@ const typeFilters = [
   { value: "", label: "Tous", icon: MoreHorizontal },
   { value: "restaurant", label: "Restaurants", icon: Store },
   { value: "bakery", label: "Boulangeries", icon: Wheat },
-  { value: "grocery", label: "Épiceries", icon: ShoppingCart },
   { value: "cafe", label: "Cafés", icon: Coffee },
 ];
 

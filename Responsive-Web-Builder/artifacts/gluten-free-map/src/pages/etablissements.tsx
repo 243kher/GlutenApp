@@ -17,6 +17,7 @@ const typeOptions = [
   { value: "", label: "Tous les types" },
   { value: "restaurant", label: "Restaurants" },
   { value: "bakery", label: "Boulangeries" },
+  { value: "grocery", label: "Épiceries" },
   { value: "cafe", label: "Cafés" },
   { value: "other", label: "Autres" },
 ];
