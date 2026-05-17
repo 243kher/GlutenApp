@@ -1,13 +1,25 @@
 import { useLocation } from "wouter";
 import {
-  User, Heart, MapPin, MessageSquare, Settings,
-  LogOut, Sparkles, Mail, Calendar, Save, X, LogIn, ShieldCheck, Crown,
+  User,
+  Heart,
+  MapPin,
+  MessageSquare,
+  Settings,
+  LogOut,
+  Sparkles,
+  Mail,
+  Calendar,
+  Save,
+  X,
+  LogIn,
+  ShieldCheck,
+  Crown,
 } from "lucide-react";
 import {
   useGetMe,
   getGetMeQueryKey,
   useUpdateMe,
-  useGetMeStats,         // ← ajout
+  useGetMeStats, // ← ajout
   getGetMeStatsQueryKey, // ← ajout
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,10 +32,25 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
-const roleConfig: Record<string, { label: string; icon: any; gradient: string }> = {
-  user: { label: "Utilisateur", icon: User, gradient: "from-blue-500/20 to-cyan-500/10" },
-  owner: { label: "Propriétaire", icon: ShieldCheck, gradient: "from-purple-500/20 to-pink-500/10" },
-  admin: { label: "Administrateur", icon: Crown, gradient: "from-amber-500/20 to-orange-500/10" },
+const roleConfig: Record<
+  string,
+  { label: string; icon: any; gradient: string }
+> = {
+  user: {
+    label: "Utilisateur",
+    icon: User,
+    gradient: "from-blue-500/20 to-cyan-500/10",
+  },
+  owner: {
+    label: "Propriétaire",
+    icon: ShieldCheck,
+    gradient: "from-purple-500/20 to-pink-500/10",
+  },
+  admin: {
+    label: "Administrateur",
+    icon: Crown,
+    gradient: "from-amber-500/20 to-orange-500/10",
+  },
 };
 
 export default function ProfilPage() {
@@ -35,21 +62,31 @@ export default function ProfilPage() {
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(user?.name ?? "");
-  const [dietaryPreferences, setDietaryPreferences] = useState(user?.dietaryPreferences ?? "");
+  const [dietaryPreferences, setDietaryPreferences] = useState(
+    user?.dietaryPreferences ?? "",
+  );
 
   const { data: profile, isLoading } = useGetMe({
     query: { queryKey: getGetMeQueryKey(), enabled: !!user },
   });
 
-  // === AJOUT : récupération des stats ===
   const { data: stats } = useGetMeStats({
     query: { queryKey: getGetMeStatsQueryKey(), enabled: !!user },
   });
 
-  console.log("🔍 stats raw:", stats);
+  console.log(" stats raw:", stats);
 
-  const s = ((stats as any)?.data ?? stats as any) ?? { establishments: 0, reviews: 0, favorites: 0 };
+  // 1. On extrait proprement le contenu utile (en descendant d'un ou deux niveaux si nécessaire)
+  const statsPayload =
+    (stats as any)?.data?.data ?? (stats as any)?.data ?? stats ?? {};
 
+  // 2. On applique un fallback strict à 0 pour chaque propriété pour éviter le marquage "undefined"
+  const s = {
+    establishments:
+      statsPayload.establishments ?? statsPayload.establishmentsCount ?? 0,
+    reviews: statsPayload.reviews ?? statsPayload.reviewsCount ?? 0,
+    favorites: statsPayload.favorites ?? statsPayload.favoritesCount ?? 0,
+  };
 
   // === Auth gate ===
   if (!user) {
@@ -62,7 +99,9 @@ export default function ProfilPage() {
           </div>
         </div>
         <h2 className="text-2xl font-bold mb-2">Connexion requise</h2>
-        <p className="text-muted-foreground mb-6">Connectez-vous pour accéder à votre profil.</p>
+        <p className="text-muted-foreground mb-6">
+          Connectez-vous pour accéder à votre profil.
+        </p>
         <Button
           onClick={() => setLocation("/connexion")}
           className="rounded-full bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/30 gap-2"
@@ -96,7 +135,12 @@ export default function ProfilPage() {
 
   function handleSave() {
     updateMe.mutate(
-      { data: { name: name || undefined, dietaryPreferences: dietaryPreferences || undefined } },
+      {
+        data: {
+          name: name || undefined,
+          dietaryPreferences: dietaryPreferences || undefined,
+        },
+      },
       {
         onSuccess: () => {
           toast({ title: "Profil mis à jour" });
@@ -104,7 +148,7 @@ export default function ProfilPage() {
           setEditing(false);
         },
         onError: () => toast({ title: "Erreur", variant: "destructive" }),
-      }
+      },
     );
   }
 
@@ -115,7 +159,9 @@ export default function ProfilPage() {
   }
 
   const memberSince = new Date(p.createdAt).toLocaleDateString("fr-FR", {
-    year: "numeric", month: "long", day: "numeric",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   return (
@@ -125,7 +171,9 @@ export default function ProfilPage() {
           ======================================================== */}
       <div className="relative mb-6 rounded-3xl overflow-hidden">
         {/* Bandeau dégradé selon le rôle */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${role.gradient}`} />
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${role.gradient}`}
+        />
         <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
 
@@ -142,7 +190,10 @@ export default function ProfilPage() {
             </div>
 
             <div className="flex-1 min-w-0 text-center sm:text-left">
-              <h1 className="text-2xl md:text-3xl font-bold mb-1 truncate" data-testid="text-profile-name">
+              <h1
+                className="text-2xl md:text-3xl font-bold mb-1 truncate"
+                data-testid="text-profile-name"
+              >
                 {p.name}
               </h1>
               <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-1.5 mb-3">
@@ -168,7 +219,7 @@ export default function ProfilPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => editing ? handleCancel() : setEditing(true)}
+                onClick={() => (editing ? handleCancel() : setEditing(true))}
                 data-testid="button-edit-profile"
                 className="rounded-full backdrop-blur bg-card/50 border-border/50 gap-1.5"
               >
@@ -201,7 +252,10 @@ export default function ProfilPage() {
           </h2>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit-name" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+              <Label
+                htmlFor="edit-name"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block"
+              >
                 Nom
               </Label>
               <Input
@@ -213,7 +267,10 @@ export default function ProfilPage() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-dietary" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+              <Label
+                htmlFor="edit-dietary"
+                className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block"
+              >
                 Préférences alimentaires
               </Label>
               <Textarea
@@ -225,7 +282,8 @@ export default function ProfilPage() {
                 data-testid="textarea-dietary"
               />
               <p className="text-xs text-muted-foreground mt-1.5">
-                Ces informations restent privées et nous aident à mieux personnaliser vos recommandations.
+                Ces informations restent privées et nous aident à mieux
+                personnaliser vos recommandations.
               </p>
             </div>
             <div className="flex gap-2 pt-1">
@@ -256,7 +314,9 @@ export default function ProfilPage() {
               <Sparkles className="w-3.5 h-3.5 text-primary" />
               Préférences alimentaires
             </h3>
-            <p className="text-sm text-foreground/90 leading-relaxed">{p.dietaryPreferences}</p>
+            <p className="text-sm text-foreground/90 leading-relaxed">
+              {p.dietaryPreferences}
+            </p>
           </div>
         )
       )}
@@ -265,9 +325,24 @@ export default function ProfilPage() {
           STATS  cartes de stats avec icônes colorées
           ======================================================== */}
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
-        <StatCard icon={MapPin}        label="Établissements" value={String(s.establishments)} color="green" />
-        <StatCard icon={MessageSquare} label="Avis publiés"   value={String(s.reviews)}        color="blue"  />
-        <StatCard icon={Heart}         label="Favoris"        value={String(s.favorites)}      color="rose"  />
+        <StatCard
+          icon={MapPin}
+          label="Établissements"
+          value={String(s.establishments)}
+          color="green"
+        />
+        <StatCard
+          icon={MessageSquare}
+          label="Avis publiés"
+          value={String(s.reviews)}
+          color="blue"
+        />
+        <StatCard
+          icon={Heart}
+          label="Favoris"
+          value={String(s.favorites)}
+          color="rose"
+        />
       </div>
 
       {/* ========================================================
@@ -282,7 +357,10 @@ export default function ProfilPage() {
         <Button
           variant="outline"
           className="gap-2 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
-          onClick={() => { logout(); setLocation("/"); }}
+          onClick={() => {
+            logout();
+            setLocation("/");
+          }}
           data-testid="button-logout-profile"
         >
           <LogOut className="w-4 h-4" />
@@ -297,17 +375,38 @@ export default function ProfilPage() {
 // StatCard  carte de stat avec icône colorée et hover
 // ============================================================
 function StatCard({
-  icon: Icon, label, value, color,
-}: { icon: any; label: string; value: string; color: "green" | "blue" | "rose" }) {
+  icon: Icon,
+  label,
+  value,
+  color,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+  color: "green" | "blue" | "rose";
+}) {
   const colorClasses = {
-    green: { gradient: "from-green-500/20 to-emerald-500/5", iconBg: "bg-green-500/15 text-green-600 dark:text-green-400" },
-    blue:  { gradient: "from-blue-500/20 to-cyan-500/5",     iconBg: "bg-blue-500/15 text-blue-600 dark:text-blue-400" },
-    rose:  { gradient: "from-rose-500/20 to-pink-500/5",     iconBg: "bg-rose-500/15 text-rose-600 dark:text-rose-400" },
+    green: {
+      gradient: "from-green-500/20 to-emerald-500/5",
+      iconBg: "bg-green-500/15 text-green-600 dark:text-green-400",
+    },
+    blue: {
+      gradient: "from-blue-500/20 to-cyan-500/5",
+      iconBg: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+    },
+    rose: {
+      gradient: "from-rose-500/20 to-pink-500/5",
+      iconBg: "bg-rose-500/15 text-rose-600 dark:text-rose-400",
+    },
   }[color];
 
   return (
-    <div className={`relative bg-gradient-to-br ${colorClasses.gradient} backdrop-blur-xl border border-border/40 rounded-2xl p-3 md:p-4 hover:scale-[1.02] transition-transform duration-200`}>
-      <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center mb-2 ${colorClasses.iconBg}`}>
+    <div
+      className={`relative bg-gradient-to-br ${colorClasses.gradient} backdrop-blur-xl border border-border/40 rounded-2xl p-3 md:p-4 hover:scale-[1.02] transition-transform duration-200`}
+    >
+      <div
+        className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center mb-2 ${colorClasses.iconBg}`}
+      >
         <Icon className="w-4 h-4 md:w-5 md:h-5" />
       </div>
       <p className="text-xl md:text-2xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
