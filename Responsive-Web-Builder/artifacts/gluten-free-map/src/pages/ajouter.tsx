@@ -65,13 +65,13 @@ export default function AjouterPage() {
   const [step, setStep] = useState(1);
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      name: "", type: "restaurant", address: "", city: "Paris",
-      lat: PARIS_LAT, lng: PARIS_LNG, safeCeliac: false,
-      phone: "", website: "", hours: "", description: "", glutenFreeMenu: "",
-    },
-  });
+  resolver: zodResolver(schema as any), // <-- Ajout de "as any" ici
+  defaultValues: {
+    name: "", type: "restaurant", address: "", city: "Paris",
+    lat: PARIS_LAT, lng: PARIS_LNG, safeCeliac: false,
+    phone: "", website: "", hours: "", description: "", glutenFreeMenu: "",
+  },
+});
 
   // === Auth gate stylé ===
   if (!user) {

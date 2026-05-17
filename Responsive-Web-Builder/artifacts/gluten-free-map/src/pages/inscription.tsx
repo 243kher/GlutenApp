@@ -62,10 +62,9 @@ export default function InscriptionPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any), // <-- Ajout de "as any" ici
     defaultValues: { name: "", email: "", password: "", role: "user" },
   });
-
   const password = form.watch("password");
 
   function onSubmit(values: z.infer<typeof schema>) {

@@ -4,14 +4,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import {
-  Leaf, Eye, EyeOff, Mail, Lock, ArrowRight, Sparkles,
-  MapPin, ShieldCheck, Heart,
+  Leaf,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  ArrowRight,
+  Sparkles,
+  MapPin,
+  ShieldCheck,
+  Heart,
 } from "lucide-react";
 import { useLogin } from "@workspace/api-client-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
 const schema = z.object({
@@ -27,7 +42,7 @@ export default function ConnexionPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any), // <-- Ajout de "as any" ici
     defaultValues: { email: "", password: "" },
   });
 
@@ -37,13 +52,20 @@ export default function ConnexionPage() {
       {
         onSuccess: (data: any) => {
           login(data.token, data.user);
-          toast({ title: "Connexion réussie", description: `Bienvenue, ${data.user.name} !` });
+          toast({
+            title: "Connexion réussie",
+            description: `Bienvenue, ${data.user.name} !`,
+          });
           setLocation("/");
         },
         onError: () => {
-          toast({ title: "Erreur", description: "Email ou mot de passe incorrect", variant: "destructive" });
+          toast({
+            title: "Erreur",
+            description: "Email ou mot de passe incorrect",
+            variant: "destructive",
+          });
         },
-      }
+      },
     );
   }
 
@@ -104,7 +126,10 @@ export default function ConnexionPage() {
               </h2>
               <p className="text-muted-foreground">
                 Pas encore de compte ?{" "}
-                <Link href="/inscription" className="font-semibold text-primary hover:underline">
+                <Link
+                  href="/inscription"
+                  className="font-semibold text-primary hover:underline"
+                >
                   Créer un compte
                 </Link>
               </p>
@@ -115,59 +140,76 @@ export default function ConnexionPage() {
               <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Email
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                          <Input
-                            type="email"
-                            placeholder="vous@exemple.fr"
-                            data-testid="input-email"
-                            className="pl-10 h-12 rounded-2xl bg-background/50 backdrop-blur border-border/50 focus-visible:ring-2 focus-visible:ring-primary/30"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Email
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                            <Input
+                              type="email"
+                              placeholder="vous@exemple.fr"
+                              data-testid="input-email"
+                              className="pl-10 h-12 rounded-2xl bg-background/50 backdrop-blur border-border/50 focus-visible:ring-2 focus-visible:ring-primary/30"
+                              {...field}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                  <FormField control={form.control} name="password" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Mot de passe
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="••••••••"
-                            data-testid="input-password"
-                            className="pl-10 pr-11 h-12 rounded-2xl bg-background/50 backdrop-blur border-border/50 focus-visible:ring-2 focus-visible:ring-primary/30"
-                            {...field}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-accent/50 transition-colors"
-                            tabIndex={-1}
-                            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                          >
-                            {showPassword
-                              ? <EyeOff className="w-4 h-4 text-muted-foreground" />
-                              : <Eye className="w-4 h-4 text-muted-foreground" />}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Mot de passe
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              data-testid="input-password"
+                              className="pl-10 pr-11 h-12 rounded-2xl bg-background/50 backdrop-blur border-border/50 focus-visible:ring-2 focus-visible:ring-primary/30"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword((v) => !v)}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-accent/50 transition-colors"
+                              tabIndex={-1}
+                              aria-label={
+                                showPassword
+                                  ? "Masquer le mot de passe"
+                                  : "Afficher le mot de passe"
+                              }
+                            >
+                              {showPassword ? (
+                                <EyeOff className="w-4 h-4 text-muted-foreground" />
+                              ) : (
+                                <Eye className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <Button
                     type="submit"
@@ -175,7 +217,9 @@ export default function ConnexionPage() {
                     disabled={mutation.isPending}
                     data-testid="button-submit"
                   >
-                    {mutation.isPending ? "Connexion..." : (
+                    {mutation.isPending ? (
+                      "Connexion..."
+                    ) : (
                       <>
                         Se connecter
                         <ArrowRight className="w-4 h-4" />
@@ -188,7 +232,10 @@ export default function ConnexionPage() {
               {/* Lien vers inscription  version mobile (sur desktop c'est en haut) */}
               <p className="lg:hidden text-center text-sm text-muted-foreground mt-5">
                 Pas encore de compte ?{" "}
-                <Link href="/inscription" className="font-semibold text-primary hover:underline">
+                <Link
+                  href="/inscription"
+                  className="font-semibold text-primary hover:underline"
+                >
                   S'inscrire
                 </Link>
               </p>
@@ -208,8 +255,14 @@ export default function ConnexionPage() {
 // Réutilisé tel quel sur Inscription
 // ============================================================
 function AuthHeroPanel({
-  tagline, headline, subline,
-}: { tagline: string; headline: string; subline: string }) {
+  tagline,
+  headline,
+  subline,
+}: {
+  tagline: string;
+  headline: string;
+  subline: string;
+}) {
   return (
     <div className="hidden lg:flex relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-background">
       {/* Blobs internes */}
@@ -220,7 +273,8 @@ function AuthHeroPanel({
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
-          backgroundImage: "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+          backgroundImage:
+            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
@@ -243,7 +297,9 @@ function AuthHeroPanel({
         <div className="max-w-md">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-5">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-semibold text-primary">{tagline}</span>
+            <span className="text-xs font-semibold text-primary">
+              {tagline}
+            </span>
           </div>
           <h2 className="text-4xl xl:text-5xl font-bold tracking-tight leading-tight mb-4">
             <span className="bg-gradient-to-br from-foreground via-foreground to-foreground/50 bg-clip-text text-transparent">
@@ -257,9 +313,18 @@ function AuthHeroPanel({
 
         {/* Liste de features en bas */}
         <div className="space-y-3 max-w-md">
-          <FeatureRow icon={MapPin} text="Carte interactive de lieux sans gluten" />
-          <FeatureRow icon={ShieldCheck} text="Établissements vérifiés par la communauté" />
-          <FeatureRow icon={Heart} text="Sauvegardez vos favoris et vos découvertes" />
+          <FeatureRow
+            icon={MapPin}
+            text="Carte interactive de lieux sans gluten"
+          />
+          <FeatureRow
+            icon={ShieldCheck}
+            text="Établissements vérifiés par la communauté"
+          />
+          <FeatureRow
+            icon={Heart}
+            text="Sauvegardez vos favoris et vos découvertes"
+          />
         </div>
       </div>
     </div>
@@ -281,11 +346,25 @@ function FeatureRow({ icon: Icon, text }: { icon: any; text: string }) {
 // DemoAccounts  encart pour les comptes de démonstration
 // Plus discret, mais cliquable pour pré-remplir le formulaire
 // ============================================================
-function DemoAccounts({ onSelect }: { onSelect: (email: string, password: string) => void }) {
+function DemoAccounts({
+  onSelect,
+}: {
+  onSelect: (email: string, password: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const accounts = [
-    { email: "admin@sansgluten.fr", password: "admin", role: "Admin", icon: "👑" },
-    { email: "marie@example.com", password: "admin", role: "Utilisateur", icon: "👤" },
+    {
+      email: "admin@sansgluten.fr",
+      password: "admin",
+      role: "Admin",
+      icon: "👑",
+    },
+    {
+      email: "marie@example.com",
+      password: "admin",
+      role: "Utilisateur",
+      icon: "👤",
+    },
   ];
 
   return (
