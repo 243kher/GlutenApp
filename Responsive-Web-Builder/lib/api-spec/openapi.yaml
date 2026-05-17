@@ -148,7 +148,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
+  /auth/me/stats:
+    get:
+      operationId: getMeStats
+      tags: [auth]
+      summary: Get current user statistics
+      description: Returns counts of establishments owned, reviews posted, and favorites for the current user
+      responses:
+        "200":
+          description: User statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeStatsResponse"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   # Establishments
   /establishments:
     get:
@@ -956,6 +974,27 @@ components:
         dietaryPreferences:
           type: ["string", "null"]
 
+    MeStatsResponse:
+      type: object
+      properties:
+        establishments:
+          type: integer
+          minimum: 0
+          description: Number of establishments owned by the user
+        reviews:
+          type: integer
+          minimum: 0
+          description: Number of reviews posted by the user
+        favorites:
+          type: integer
+          minimum: 0
+          description: Number of establishments favorited by the user
+      required:
+        - establishments
+        - reviews
+        - favorites
+
+        
     # Establishments
     Establishment:
       type: object

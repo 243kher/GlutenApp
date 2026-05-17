@@ -1,6 +1,12 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, usersTable } from "@workspace/db";
+import { eq, count } from "drizzle-orm"; // ← ajout: count
+import {
+  db,
+  usersTable,
+  establishmentsTable, // ← ajout
+  reviewsTable,        // ← ajout
+  favoritesTable,      // ← ajout
+} from "@workspace/db";
 import { RegisterBody, LoginBody, UpdateMeBody } from "@workspace/api-zod";
 import { createHash } from "crypto";
 
@@ -112,6 +118,40 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     avatarUrl: user.avatarUrl ?? null,
     dietaryPreferences: user.dietaryPreferences ?? null,
     createdAt: user.createdAt,
+  });
+});
+
+// ============================================================
+// AJOUT : GET /auth/me/stats
+// Retourne le nombre d'établissements possédés, d'avis postés
+// et de favoris pour l'utilisateur courant
+// ============================================================
+router.get("/auth/me/stats", async (req, res): Promise<void> => {
+  const user = await getUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Non authentifié" });
+    return;
+  }
+
+  const [establishmentsCount, reviewsCount, favoritesCount] = await Promise.all([
+    db
+      .select({ count: count() })
+      .from(establishmentsTable)
+      .where(eq(establishmentsTable.ownerId, user.id)),
+    db
+      .select({ count: count() })
+      .from(reviewsTable)
+      .where(eq(reviewsTable.userId, user.id)),
+    db
+      .select({ count: count() })
+      .from(favoritesTable)
+      .where(eq(favoritesTable.userId, user.id)),
+  ]);
+
+  res.json({
+    establishments: Number(establishmentsCount[0]?.count ?? 0),
+    reviews: Number(reviewsCount[0]?.count ?? 0),
+    favorites: Number(favoritesCount[0]?.count ?? 0),
   });
 });
 

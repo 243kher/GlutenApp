@@ -87,6 +87,31 @@ export const UpdateMeResponse = zod.object({
 });
 
 /**
+ * Returns counts of establishments owned, reviews posted, and favorites for the current user
+ * @summary Get current user statistics
+ */
+export const getMeStatsResponseEstablishmentsMin = 0;
+
+export const getMeStatsResponseReviewsMin = 0;
+
+export const getMeStatsResponseFavoritesMin = 0;
+
+export const GetMeStatsResponse = zod.object({
+  establishments: zod
+    .number()
+    .min(getMeStatsResponseEstablishmentsMin)
+    .describe("Number of establishments owned by the user"),
+  reviews: zod
+    .number()
+    .min(getMeStatsResponseReviewsMin)
+    .describe("Number of reviews posted by the user"),
+  favorites: zod
+    .number()
+    .min(getMeStatsResponseFavoritesMin)
+    .describe("Number of establishments favorited by the user"),
+});
+
+/**
  * @summary List / search establishments
  */
 export const ListEstablishmentsQueryParams = zod.object({

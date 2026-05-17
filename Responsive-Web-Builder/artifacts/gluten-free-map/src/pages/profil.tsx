@@ -3,7 +3,13 @@ import {
   User, Heart, MapPin, MessageSquare, Settings,
   LogOut, Sparkles, Mail, Calendar, Save, X, LogIn, ShieldCheck, Crown,
 } from "lucide-react";
-import { useGetMe, getGetMeQueryKey, useUpdateMe } from "@workspace/api-client-react";
+import {
+  useGetMe,
+  getGetMeQueryKey,
+  useUpdateMe,
+  useGetMeStats,         // ← ajout
+  getGetMeStatsQueryKey, // ← ajout
+} from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -34,6 +40,12 @@ export default function ProfilPage() {
   const { data: profile, isLoading } = useGetMe({
     query: { queryKey: getGetMeQueryKey(), enabled: !!user },
   });
+
+  // === AJOUT : récupération des stats ===
+  const { data: stats } = useGetMeStats({
+    query: { queryKey: getGetMeStatsQueryKey(), enabled: !!user },
+  });
+  const s = (stats as any) ?? { establishments: 0, reviews: 0, favorites: 0 };
 
   // === Auth gate ===
   if (!user) {
@@ -249,9 +261,9 @@ export default function ProfilPage() {
           STATS  cartes de stats avec icônes colorées
           ======================================================== */}
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
-        <StatCard icon={MapPin}        label="Établissements"  value="0" color="green" />
-        <StatCard icon={MessageSquare} label="Avis publiés"    value="0" color="blue" />
-        <StatCard icon={Heart}         label="Favoris"         value="0" color="rose" />
+        <StatCard icon={MapPin}        label="Établissements" value={String(s.establishments)} color="green" />
+        <StatCard icon={MessageSquare} label="Avis publiés"   value={String(s.reviews)}        color="blue"  />
+        <StatCard icon={Heart}         label="Favoris"        value={String(s.favorites)}      color="rose"  />
       </div>
 
       {/* ========================================================

@@ -73,6 +73,24 @@ export interface UpdateMeBody {
   dietaryPreferences?: string | null;
 }
 
+export interface MeStatsResponse {
+  /**
+   * Number of establishments owned by the user
+   * @minimum 0
+   */
+  establishments: number;
+  /**
+   * Number of reviews posted by the user
+   * @minimum 0
+   */
+  reviews: number;
+  /**
+   * Number of establishments favorited by the user
+   * @minimum 0
+   */
+  favorites: number;
+}
+
 export type EstablishmentType =
   (typeof EstablishmentType)[keyof typeof EstablishmentType];
 

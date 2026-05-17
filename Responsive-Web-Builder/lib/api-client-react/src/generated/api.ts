@@ -36,6 +36,7 @@ import type {
   ListReportsParams,
   ListReviewsParams,
   LoginBody,
+  MeStatsResponse,
   ModerateEstablishmentBody,
   PlatformStats,
   Product,
@@ -540,6 +541,82 @@ export const useUpdateMe = <
 > => {
   return useMutation(getUpdateMeMutationOptions(options));
 };
+
+/**
+ * Returns counts of establishments owned, reviews posted, and favorites for the current user
+ * @summary Get current user statistics
+ */
+export const getGetMeStatsUrl = () => {
+  return `/api/auth/me/stats`;
+};
+
+export const getMeStats = async (
+  options?: RequestInit,
+): Promise<MeStatsResponse> => {
+  return customFetch<MeStatsResponse>(getGetMeStatsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMeStatsQueryKey = () => {
+  return [`/api/auth/me/stats`] as const;
+};
+
+export const getGetMeStatsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMeStats>>,
+  TError = ErrorType<ErrorResponse>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getMeStats>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMeStatsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMeStats>>> = ({
+    signal,
+  }) => getMeStats({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMeStats>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetMeStatsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMeStats>>
+>;
+export type GetMeStatsQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Get current user statistics
+ */
+
+export function useGetMeStats<
+  TData = Awaited<ReturnType<typeof getMeStats>>,
+  TError = ErrorType<ErrorResponse>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getMeStats>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetMeStatsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary List / search establishments
