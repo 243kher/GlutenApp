@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import logoFeuille from './public/glutenapp2.png'; 
 const navLinks = [
   { href: "/", label: "Carte", icon: MapPin },
   { href: "/etablissements", label: "Lieux", icon: Leaf },
@@ -41,7 +41,11 @@ export default function Navbar() {
             >
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/40 blur-md rounded-full group-hover:bg-primary/60 transition-all duration-300" />
-                <Leaf className="w-6 h-6 text-primary relative" />
+                <img
+                    src="/glutenapp2.png" 
+                    alt="Logo Gluten Free" 
+                    className="w-8 h-8 object-contain relative" 
+                  />
               </div>
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent hidden sm:block">
                 Gluten Free Spot
