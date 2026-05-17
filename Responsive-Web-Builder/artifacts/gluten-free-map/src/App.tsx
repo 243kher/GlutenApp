@@ -24,7 +24,7 @@ import ConnexionPage from "@/pages/connexion";
 import InscriptionPage from "@/pages/inscription";
 import { Leaf } from "lucide-react";
 import { setAuthTokenGetter, setBaseUrl } from "@workspace/api-client-react";
-
+import ProduitDetailPage from "@/pages/produit-detail";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +45,7 @@ function Router() {
       <Route path="/etablissements" component={EtablissementsPage} />
       <Route path="/etablissements/:id" component={EtablissementDetailPage} />
       <Route path="/produits" component={ProduitsPage} />
+      <Route path="/produits/:id" component={ProduitDetailPage} /> 
       <Route path="/ajouter" component={AjouterPage} />
       <Route path="/profil" component={ProfilPage} />
       <Route path="/admin" component={AdminPage} />
