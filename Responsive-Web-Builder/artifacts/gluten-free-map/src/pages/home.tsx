@@ -550,7 +550,7 @@ function DesktopHeroBar({
             )}
           </div>
 
-          {/* Bouton "Près de moi" intégré à droite de la barre de recherche */}
+          {/* Bouton "Près de moi" */}
           <button
             onClick={nearbyMode ? resetGeo : locate}
             disabled={geoState.status === "loading"}
@@ -1016,13 +1016,7 @@ export default function HomePage() {
                         {e.averageRating.toFixed(1)}/5 ({e.reviewCount} avis)
                       </p>
                     )}
-                    <Link href={`/etablissements/${selected.id}`}>
-                     <div
-                      className="text-xs text-green-600 hover:underline font-medium mt-1 block"
-                    >
-                      Voir la fiche →
-                      </div>
-                    </Link>
+                    
                   </div>
                 </Popup>
               </Marker>
