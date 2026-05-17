@@ -88,8 +88,11 @@ const typeFilters = [
   { value: "", label: "Tous", icon: MoreHorizontal },
   { value: "restaurant", label: "Restaurants", icon: Store },
   { value: "bakery", label: "Boulangeries", icon: Wheat },
+  { value: "grocery", label: "Épiceries", icon: ShoppingCart },
   { value: "cafe", label: "Cafés", icon: Coffee },
 ];
+
+
 
 // Même liste mais en version compacte pour le mobile (modal)
 const typeOptions = typeFilters.map(({ value, label }) => ({ value, label }));
@@ -784,7 +787,9 @@ export default function HomePage() {
     query: { queryKey: getGetPlatformStatsQueryKey() },
   });
 
-  const establishments = (data as any)?.establishments ?? [];
+  const establishments = ((data as any)?.establishments ?? []).filter((e: any) =>
+    type === "" ? e.type !== "grocery" : true
+  );
   const selected = establishments.find((e: any) => e.id === selectedId) ?? null;
 
   const activeFilterCount =
