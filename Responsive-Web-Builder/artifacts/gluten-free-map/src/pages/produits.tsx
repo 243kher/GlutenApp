@@ -2,13 +2,13 @@ import { useState } from "react";
 import {
   Search, ShoppingBag, BadgeCheck, X, Sparkles,
   ChevronLeft, ChevronRight, Package,
-  Link,
 } from "lucide-react";
 import { useListProducts, getListProductsQueryKey } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Link } from "wouter";
 
 // ============================================================
 // Configuration des catégories  couleurs 
@@ -253,71 +253,66 @@ function CategoryChip({
 // ============================================================
 function ProductCard({ product }: { product: any }) {
   const cfg = categoryConfig[product.category] ?? fallbackCategory;
-
+ 
   return (
     <Link href={`/produits/${product.id}`}>
-      
+      <a
         className="group relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300 block cursor-pointer"
         data-testid={`card-product-${product.id}`}
       >
-    <div
-      className="group relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300"
-      data-testid={`card-product-${product.id}`}
-    >
-      {/* Liseré lumineux en haut au hover */}
-      <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-      {/* === Image / placeholder avec fond dégradé selon catégorie === */}
-      <div className={`relative h-32 sm:h-36 bg-gradient-to-br ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
-
-
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="relative w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-500"
-          />
-        ) : (
-          <span className="relative text-5xl drop-shadow-sm group-hover:scale-110 transition-transform duration-500">
-          </span>
-        )}
-
-        {/* Badge "Vérifié" flottant en haut à droite de l'image */}
-        {product.isVerified && (
-          <div className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/90 backdrop-blur text-white text-[10px] font-bold shadow-md shadow-green-500/30">
-            <BadgeCheck className="w-3 h-3" />
-            <span className="hidden sm:inline">Vérifié</span>
-          </div>
-        )}
-      </div>
-
-      {/* === Contenu === */}
-      <div className="p-3 md:p-4">
-        <h3
-          className="font-bold text-sm leading-tight mb-1 line-clamp-2 min-h-[2.5rem]"
-          data-testid={`text-product-name-${product.id}`}
-        >
-          {product.name}
-        </h3>
-        {product.brand && (
-          <p className="text-xs text-muted-foreground mb-2 truncate">{product.brand}</p>
-        )}
-
-        {product.category && (
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/60 backdrop-blur border border-border/40 text-[11px] font-medium text-foreground/80">
-            {product.category}
-          </div>
-        )}
-
-        {product.description && (
-          <p className="text-xs text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
-            {product.description}
-          </p>
-        )}
-      </div>
-    </div></Link>
+        {/* Liseré lumineux en haut au hover */}
+        <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+ 
+        {/* === Image / placeholder avec fond dégradé selon catégorie === */}
+        <div className={`relative h-32 sm:h-36 bg-gradient-to-br ${cfg.gradient} flex items-center justify-center overflow-hidden`}>
+          {product.imageUrl ? (
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="relative w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-500"
+            />
+          ) : (
+            <Package className="w-12 h-12 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-500" />
+          )}
+ 
+          {/* Badge "Vérifié" flottant */}
+          {product.isVerified && (
+            <div className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/90 backdrop-blur text-white text-[10px] font-bold shadow-md shadow-green-500/30">
+              <BadgeCheck className="w-3 h-3" />
+              <span className="hidden sm:inline">Vérifié</span>
+            </div>
+          )}
+        </div>
+ 
+        {/* === Contenu === */}
+        <div className="p-3 md:p-4">
+          <h3
+            className="font-bold text-sm leading-tight mb-1 line-clamp-2 min-h-[2.5rem]"
+            data-testid={`text-product-name-${product.id}`}
+          >
+            {product.name}
+          </h3>
+          {product.brand && (
+            <p className="text-xs text-muted-foreground mb-2 truncate">{product.brand}</p>
+          )}
+ 
+          {product.category && (
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/60 backdrop-blur border border-border/40 text-[11px] font-medium text-foreground/80">
+              {product.category}
+            </div>
+          )}
+ 
+          {product.description && (
+            <p className="text-xs text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
+              {product.description}
+            </p>
+          )}
+        </div>
+      </a>
+    </Link>
   );
 }
+ 
 
 // ============================================================
 // État vide
