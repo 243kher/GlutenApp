@@ -45,7 +45,11 @@ export default function ProfilPage() {
   const { data: stats } = useGetMeStats({
     query: { queryKey: getGetMeStatsQueryKey(), enabled: !!user },
   });
-  const s = (stats as any) ?? { establishments: 0, reviews: 0, favorites: 0 };
+
+  console.log("🔍 stats raw:", stats);
+
+  const s = ((stats as any)?.data ?? stats as any) ?? { establishments: 0, reviews: 0, favorites: 0 };
+
 
   // === Auth gate ===
   if (!user) {
