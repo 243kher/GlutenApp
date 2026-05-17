@@ -550,7 +550,7 @@ function DesktopHeroBar({
             )}
           </div>
 
-          {/* Bouton "Près de moi" 
+          {/* Bouton "Près de moi" intégré à droite de la barre de recherche */}
           <button
             onClick={nearbyMode ? resetGeo : locate}
             disabled={geoState.status === "loading"}
@@ -574,7 +574,7 @@ function DesktopHeroBar({
               {nearbyMode ? "Près de moi" : "Me localiser"}
               {nearbyMode && <X className="w-3 h-3 ml-1 opacity-70" />}
             </span>
-          </button>*/}
+          </button>
 
           {/* Compteur de résultats à droite */}
           <div className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
