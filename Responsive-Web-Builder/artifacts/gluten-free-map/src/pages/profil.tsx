@@ -70,9 +70,23 @@ export default function ProfilPage() {
     query: { queryKey: getGetMeQueryKey(), enabled: !!user },
   });
 
-  const { data: stats } = useGetMeStats({
+  const { data: stats, isLoading: statsLoading } = useGetMeStats({
     query: { queryKey: getGetMeStatsQueryKey(), enabled: !!user },
   });
+
+  // Type attendu (à ajouter idéalement dans un type partagé)
+  type MeStats = {
+    establishments: number;
+    reviews: number;
+    favorites: number;
+  };
+
+  // Orval renvoie directement le body — pas de .data.data
+  const s: MeStats = (stats as MeStats) ?? {
+    establishments: 0,
+    reviews: 0,
+    favorites: 0,
+  };
 
   console.log(" stats raw:", stats);
 
@@ -80,13 +94,6 @@ export default function ProfilPage() {
   const statsPayload =
     (stats as any)?.data?.data ?? (stats as any)?.data ?? stats ?? {};
 
-  // 2. On applique un fallback strict à 0 pour chaque propriété pour éviter le marquage "undefined"
-  const s = {
-    establishments:
-      statsPayload.establishments ?? statsPayload.establishmentsCount ?? 0,
-    reviews: statsPayload.reviews ?? statsPayload.reviewsCount ?? 0,
-    favorites: statsPayload.favorites ?? statsPayload.favoritesCount ?? 0,
-  };
 
   // === Auth gate ===
   if (!user) {
@@ -328,19 +335,19 @@ export default function ProfilPage() {
         <StatCard
           icon={MapPin}
           label="Établissements"
-          value={String(s.establishments)}
+          value={statsLoading ? "…" : String(s.establishments)}
           color="green"
         />
         <StatCard
           icon={MessageSquare}
           label="Avis publiés"
-          value={String(s.reviews)}
+          value={statsLoading ? "…" : String(s.reviews)}
           color="blue"
         />
         <StatCard
           icon={Heart}
           label="Favoris"
-          value={String(s.favorites)}
+          value={statsLoading ? "…" : String(s.favorites)}
           color="rose"
         />
       </div>
