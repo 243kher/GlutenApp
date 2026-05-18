@@ -27,6 +27,7 @@ import { setAuthTokenGetter, setBaseUrl } from "@workspace/api-client-react";
 import ProduitDetailPage from "@/pages/produit-detail";
 import MesFavorisPage from "@/pages/mes-favoris";
 import MesAvisPage from "@/pages/mes-avis";
+import MesEtablissementsPage from "@/pages/mes-etablissements";  
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/connexion" component={ConnexionPage} />
       <Route path="/mes-favoris" component={MesFavorisPage} />
       <Route path="/mes-avis" component={MesAvisPage} />
+      <Route path="/mes-etablissements" component={MesEtablissementsPage} />
       <Route path="/inscription" component={InscriptionPage} />
       <Route component={NotFound} />
     </Switch>

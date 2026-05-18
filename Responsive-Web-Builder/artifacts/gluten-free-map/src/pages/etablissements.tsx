@@ -13,7 +13,6 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useGeolocation } from "@/hooks/useGeolocation";
 
-// On garde "grocery" ici pour qu'il soit cliquable séparément
 const typeOptions = [
   { value: "", label: "Tous les types" },
   { value: "restaurant", label: "Restaurants" },
@@ -76,7 +75,7 @@ function FiltersContent({
   const isMobile = variant === "mobile";
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${isMobile ? "" : ""}`}>
       {/* Près de moi */}
       <div>
         <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">
@@ -133,7 +132,7 @@ function FiltersContent({
         )}
       </div>
 
-      {/* Recherche libre uniquement sur desktop */}
+      {/* Recherche libre  uniquement sur desktop (sur mobile elle est en haut) */}
       {!isMobile && (
         <div>
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">
@@ -182,7 +181,7 @@ function FiltersContent({
               key={opt.value}
               active={verificationLevel === opt.value}
               onClick={() => { setVerificationLevel(opt.value); setPage(1); }}
-              data-testid={`filter-verification-${opt.value || "all"}`}
+              dataTestId={`filter-verification-${opt.value || "all"}`}
             >
               {opt.label}
             </PillButton>
@@ -210,7 +209,7 @@ function FiltersContent({
 }
 
 // ============================================================
-// Modal de filtres plein écran (mobile)
+// Modal de filtres plein écran (mobile) style Airbnb
 // ============================================================
 function FiltersModal({ open, onClose, resultsCount, onReset, ...rest }: any) {
   if (!open) return null;
@@ -246,7 +245,7 @@ function FiltersModal({ open, onClose, resultsCount, onReset, ...rest }: any) {
 }
 
 // ============================================================
-// EtablissementsPage composant principal
+// EtablissementsPage  composant principal
 // ============================================================
 export default function EtablissementsPage() {
   const [search, setSearch] = useState("");
@@ -264,18 +263,7 @@ export default function EtablissementsPage() {
 
   const params: any = { page, limit };
   if (search) params.search = search;
-  
-  // LOGIQUE MODIFIÉE ICI :
-  // Si un type est explicitement choisi (ex: 'restaurant' ou même 'grocery'), on l'envoie directement.
-  // Si "Tous les types" est actif (type vide ""), on envoie la liste de TOUS les types SAUF "grocery".
-  if (type) {
-    params.type = type;
-  } else {
-    params.types = ["restaurant", "bakery", "cafe", "other"];
-    // Note : Si ton API attend une string séparée par des virgules plutôt qu'un tableau, 
-    // utilise : params.types = "restaurant,bakery,cafe,other";
-  }
-  
+  if (type) params.type = type;
   if (verificationLevel) params.verificationLevel = verificationLevel;
   if (safeCeliac) params.safeCeliac = true;
   if (userLat != null && userLng != null) {
@@ -306,6 +294,7 @@ export default function EtablissementsPage() {
     setSafeCeliac(false); setNearbyRadius(null); setPage(1);
   }
 
+  // Compteur de filtres actifs pour le badge sur le bouton mobile
   const activeFilterCount =
     (type ? 1 : 0) +
     (verificationLevel ? 1 : 0) +
@@ -313,6 +302,7 @@ export default function EtablissementsPage() {
     (nearbyMode ? 1 : 0) +
     (nearbyRadius != null ? 1 : 0);
 
+  // Chips d'aperçu des filtres actifs (mobile)
   const activeChips: Array<{ label: string; onRemove: () => void }> = [];
   if (type) activeChips.push({
     label: typeOptions.find(o => o.value === type)?.label || "",
@@ -341,7 +331,9 @@ export default function EtablissementsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
-      {/* HEADER */}
+      {/* ========================================================
+          HEADER  titre avec gradient + CTA carte
+          ======================================================== */}
       <div className="mb-6 md:mb-8 flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -354,6 +346,7 @@ export default function EtablissementsPage() {
           </p>
         </div>
 
+        {/* CTA carte caché sur mobile (déjà dans la bottom nav) */}
         <Link href="/" className="hidden md:block">
           <Button variant="outline" size="sm" className="gap-2 rounded-full backdrop-blur bg-card/50 border-border/50">
             <MapPin className="w-4 h-4" />
@@ -362,7 +355,9 @@ export default function EtablissementsPage() {
         </Link>
       </div>
 
-      {/* BARRE MOBILE */}
+      {/* ========================================================
+          BARRE MOBILE  recherche + bouton filtres (sticky)
+          ======================================================== */}
       <div className="md:hidden sticky top-16 z-30 -mx-4 px-4 py-3 mb-4 backdrop-blur-xl bg-background/80 border-b border-border/40">
         <div className="flex gap-2">
           <div className="relative flex-1">
@@ -389,6 +384,7 @@ export default function EtablissementsPage() {
           </button>
         </div>
 
+        {/* Chips des filtres actifs (scrollable horizontal) */}
         {activeChips.length > 0 && (
           <div className="flex gap-1.5 mt-3 overflow-x-auto scrollbar-none -mx-1 px-1">
             {activeChips.map((chip, i) => (
@@ -411,8 +407,11 @@ export default function EtablissementsPage() {
         )}
       </div>
 
-      {/* LAYOUT PRINCIPAL */}
+      {/* ========================================================
+          LAYOUT PRINCIPAL  sidebar desktop + grille
+          ======================================================== */}
       <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sidebar desktop avec glassmorphism */}
         <aside className="hidden lg:block w-72 flex-shrink-0">
           <div className="relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl p-5 sticky top-24 shadow-sm">
             <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
@@ -429,6 +428,7 @@ export default function EtablissementsPage() {
           </div>
         </aside>
 
+        {/* Grille de résultats */}
         <main className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -494,7 +494,7 @@ export default function EtablissementsPage() {
             </div>
           )}
 
-          {/* Pagination */}
+          {/* Pagination modernisée */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-3 mt-10">
               <Button
@@ -528,6 +528,7 @@ export default function EtablissementsPage() {
         </main>
       </div>
 
+      {/* Modal de filtres mobile */}
       <FiltersModal
         open={filtersModalOpen}
         onClose={() => setFiltersModalOpen(false)}

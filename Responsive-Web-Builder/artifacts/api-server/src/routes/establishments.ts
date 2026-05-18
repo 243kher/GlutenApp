@@ -151,7 +151,7 @@ router.post("/establishments", async (req, res): Promise<void> => {
     .values({
       ...parsed.data,
       safeCeliac: parsed.data.safeCeliac ?? false,
-      ownerId: user.role === "owner" ? user.id : null,
+      ownerId: user.id, // ← Toujours l'utilisateur courant, quel que soit son rôle
     })
     .returning();
   res.status(201).json(buildEstablishment(establishment));

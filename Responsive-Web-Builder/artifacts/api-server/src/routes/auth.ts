@@ -269,4 +269,41 @@ router.patch("/auth/me", async (req, res): Promise<void> => {
   });
 });
 
+// ============================================================
+// GET /auth/me/establishments
+// Liste les établissements possédés par l'utilisateur (owner)
+// ============================================================
+router.get("/auth/me/establishments", async (req, res): Promise<void> => {
+  const user = await getUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Non authentifié" });
+    return;
+  }
+
+  const results = await db
+    .select()
+    .from(establishmentsTable)
+    .where(eq(establishmentsTable.ownerId, user.id))
+    .orderBy(desc(establishmentsTable.createdAt));
+
+  res.json(
+    results.map((e) => ({
+      id: e.id,
+      name: e.name,
+      type: e.type,
+      address: e.address,
+      city: e.city,
+      lat: e.lat,
+      lng: e.lng,
+      verificationLevel: e.verificationLevel,
+      safeCeliac: e.safeCeliac,
+      photoUrl: e.photoUrl ?? null,
+      averageRating: e.averageRating ?? null,
+      reviewCount: e.reviewCount,
+      verificationCount: e.verificationCount,
+      createdAt: e.createdAt,
+    })),
+  );
+});
+
 export default router;

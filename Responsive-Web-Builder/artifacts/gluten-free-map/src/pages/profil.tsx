@@ -330,12 +330,14 @@ export default function ProfilPage() {
       {/* ========================================================
           STATS  cartes de stats avec icônes colorées
           ======================================================== */}
+
       <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
         <StatCard
           icon={MapPin}
           label="Établissements"
           value={statsLoading ? "…" : String(s.establishments)}
           color="green"
+          href="/mes-etablissements"
         />
         <StatCard
           icon={MessageSquare}
