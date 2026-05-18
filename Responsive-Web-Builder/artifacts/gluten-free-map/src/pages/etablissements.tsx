@@ -13,11 +13,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useGeolocation } from "@/hooks/useGeolocation";
 
+// Option "grocery" supprimée de la liste
 const typeOptions = [
   { value: "", label: "Tous les types" },
   { value: "restaurant", label: "Restaurants" },
   { value: "bakery", label: "Boulangeries" },
-  { value: "grocery", label: "Épiceries" },
   { value: "cafe", label: "Cafés" },
   { value: "other", label: "Autres" },
 ];
@@ -132,7 +132,7 @@ function FiltersContent({
         )}
       </div>
 
-      {/* Recherche libre  uniquement sur desktop (sur mobile elle est en haut) */}
+      {/* Recherche libre uniquement sur desktop (sur mobile elle est en haut) */}
       {!isMobile && (
         <div>
           <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 block">
@@ -181,7 +181,7 @@ function FiltersContent({
               key={opt.value}
               active={verificationLevel === opt.value}
               onClick={() => { setVerificationLevel(opt.value); setPage(1); }}
-              dataTestId={`filter-verification-${opt.value || "all"}`}
+              data-testid={`filter-verification-${opt.value || "all"}`}
             >
               {opt.label}
             </PillButton>
@@ -245,7 +245,7 @@ function FiltersModal({ open, onClose, resultsCount, onReset, ...rest }: any) {
 }
 
 // ============================================================
-// EtablissementsPage  composant principal
+// EtablissementsPage composant principal
 // ============================================================
 export default function EtablissementsPage() {
   const [search, setSearch] = useState("");
@@ -263,7 +263,17 @@ export default function EtablissementsPage() {
 
   const params: any = { page, limit };
   if (search) params.search = search;
-  if (type) params.type = type;
+  
+  // Modification stratégique ici :
+  if (type) {
+    params.type = type;
+  } else {
+    // Si l'utilisateur choisit "Tous les types", on envoie explicitement à l'API 
+    // la liste des types autorisés (sans 'grocery') si votre backend accepte un tableau ou une string jointe.
+    // Note : Si votre backend n'accepte pas ça, il faudra filtrer directement côté API (dans le backend).
+    params.types = ["restaurant", "bakery", "cafe", "other"]; 
+  }
+  
   if (verificationLevel) params.verificationLevel = verificationLevel;
   if (safeCeliac) params.safeCeliac = true;
   if (userLat != null && userLng != null) {
@@ -332,7 +342,7 @@ export default function EtablissementsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
       {/* ========================================================
-          HEADER  titre avec gradient + CTA carte
+          HEADER titre avec gradient + CTA carte
           ======================================================== */}
       <div className="mb-6 md:mb-8 flex items-end justify-between gap-4">
         <div>
@@ -356,7 +366,7 @@ export default function EtablissementsPage() {
       </div>
 
       {/* ========================================================
-          BARRE MOBILE  recherche + bouton filtres (sticky)
+          BARRE MOBILE recherche + bouton filtres (sticky)
           ======================================================== */}
       <div className="md:hidden sticky top-16 z-30 -mx-4 px-4 py-3 mb-4 backdrop-blur-xl bg-background/80 border-b border-border/40">
         <div className="flex gap-2">
@@ -408,7 +418,7 @@ export default function EtablissementsPage() {
       </div>
 
       {/* ========================================================
-          LAYOUT PRINCIPAL  sidebar desktop + grille
+          LAYOUT PRINCIPAL sidebar desktop + grille
           ======================================================== */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar desktop avec glassmorphism */}
