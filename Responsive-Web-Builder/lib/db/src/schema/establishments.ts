@@ -21,7 +21,7 @@ export const establishmentsTable = pgTable("establishments", {
   hours: text("hours"),
   description: text("description"),
   photoUrl: text("photo_url"),
-  glutenFreeMenu: text("gluten_free_menu"),
+  glutenFreeMenu: boolean("gluten_free_menu").notNull().default(false),
   reviewCount: integer("review_count").notNull().default(0),
   verificationCount: integer("verification_count").notNull().default(0),
   averageRating: doublePrecision("average_rating"),
