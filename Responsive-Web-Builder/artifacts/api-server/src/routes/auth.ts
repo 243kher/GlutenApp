@@ -1,14 +1,15 @@
 import { Router, type IRouter } from "express";
-import { eq, count } from "drizzle-orm"; // ← ajout: count
+import { eq, count } from "drizzle-orm"; 
 import {
   db,
   usersTable,
-  establishmentsTable, // ← ajout
-  reviewsTable,        // ← ajout
-  favoritesTable,      // ← ajout
+  establishmentsTable, 
+  reviewsTable,        
+  favoritesTable,      
 } from "@workspace/db";
 import { RegisterBody, LoginBody, UpdateMeBody } from "@workspace/api-zod";
 import { createHash } from "crypto";
+import { desc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
@@ -121,6 +122,91 @@ router.get("/auth/me", async (req, res): Promise<void> => {
   });
 });
 
+// ============================================================
+// GET /auth/me/favorites
+// Liste les établissements favoris de l'utilisateur courant
+// ============================================================
+router.get("/auth/me/favorites", async (req, res): Promise<void> => {
+  const user = await getUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Non authentifié" });
+    return;
+  }
+
+  const results = await db
+    .select({
+      favoriteId: favoritesTable.id,
+      favoritedAt: favoritesTable.createdAt,
+      establishment: establishmentsTable,
+    })
+    .from(favoritesTable)
+    .innerJoin(
+      establishmentsTable,
+      eq(favoritesTable.establishmentId, establishmentsTable.id),
+    )
+    .where(eq(favoritesTable.userId, user.id))
+    .orderBy(desc(favoritesTable.createdAt));
+
+  res.json(
+    results.map((r) => ({
+      favoriteId: r.favoriteId,
+      favoritedAt: r.favoritedAt,
+      id: r.establishment.id,
+      name: r.establishment.name,
+      type: r.establishment.type,
+      address: r.establishment.address,
+      city: r.establishment.city,
+      photoUrl: r.establishment.photoUrl ?? null,
+      averageRating: r.establishment.averageRating ?? null,
+      reviewCount: r.establishment.reviewCount,
+      verificationLevel: r.establishment.verificationLevel,
+      safeCeliac: r.establishment.safeCeliac,
+    })),
+  );
+});
+
+// ============================================================
+// GET /auth/me/reviews
+// Liste les avis publiés par l'utilisateur courant
+// ============================================================
+router.get("/auth/me/reviews", async (req, res): Promise<void> => {
+  const user = await getUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Non authentifié" });
+    return;
+  }
+
+  const results = await db
+    .select({
+      review: reviewsTable,
+      establishment: establishmentsTable,
+    })
+    .from(reviewsTable)
+    .innerJoin(
+      establishmentsTable,
+      eq(reviewsTable.establishmentId, establishmentsTable.id),
+    )
+    .where(eq(reviewsTable.userId, user.id))
+    .orderBy(desc(reviewsTable.createdAt));
+
+  res.json(
+    results.map((r) => ({
+      id: r.review.id,
+      rating: r.review.rating,
+      comment: r.review.comment ?? null,
+      crossContaminationAlert: r.review.crossContaminationAlert,
+      photoUrl: r.review.photoUrl ?? null,
+      createdAt: r.review.createdAt,
+      establishment: {
+        id: r.establishment.id,
+        name: r.establishment.name,
+        type: r.establishment.type,
+        city: r.establishment.city,
+        photoUrl: r.establishment.photoUrl ?? null,
+      },
+    })),
+  );
+});
 // ============================================================
 // AJOUT : GET /auth/me/stats
 // Retourne le nombre d'établissements possédés, d'avis postés

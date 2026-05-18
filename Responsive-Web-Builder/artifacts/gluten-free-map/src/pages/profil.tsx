@@ -94,7 +94,6 @@ export default function ProfilPage() {
   const statsPayload =
     (stats as any)?.data?.data ?? (stats as any)?.data ?? stats ?? {};
 
-
   // === Auth gate ===
   if (!user) {
     return (
@@ -343,12 +342,14 @@ export default function ProfilPage() {
           label="Avis publiés"
           value={statsLoading ? "…" : String(s.reviews)}
           color="blue"
+          href="/mes-avis"
         />
         <StatCard
           icon={Heart}
           label="Favoris"
           value={statsLoading ? "…" : String(s.favorites)}
           color="rose"
+          href="/mes-favoris"
         />
       </div>
 
@@ -386,12 +387,15 @@ function StatCard({
   label,
   value,
   color,
+  href,
 }: {
   icon: any;
   label: string;
   value: string;
   color: "green" | "blue" | "rose";
+  href?: string;
 }) {
+  const [, setLocation] = useLocation();
   const colorClasses = {
     green: {
       gradient: "from-green-500/20 to-emerald-500/5",
@@ -407,9 +411,18 @@ function StatCard({
     },
   }[color];
 
+  const clickable = !!href;
+
   return (
     <div
-      className={`relative bg-gradient-to-br ${colorClasses.gradient} backdrop-blur-xl border border-border/40 rounded-2xl p-3 md:p-4 hover:scale-[1.02] transition-transform duration-200`}
+      onClick={clickable ? () => setLocation(href!) : undefined}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      className={`relative bg-gradient-to-br ${colorClasses.gradient} backdrop-blur-xl border border-border/40 rounded-2xl p-3 md:p-4 transition-all duration-200 ${
+        clickable
+          ? "cursor-pointer hover:scale-[1.04] hover:border-primary/40 active:scale-[0.98]"
+          : "hover:scale-[1.02]"
+      }`}
     >
       <div
         className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center mb-2 ${colorClasses.iconBg}`}

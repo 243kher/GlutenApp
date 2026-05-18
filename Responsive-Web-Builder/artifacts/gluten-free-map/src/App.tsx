@@ -25,6 +25,8 @@ import InscriptionPage from "@/pages/inscription";
 import { Leaf } from "lucide-react";
 import { setAuthTokenGetter, setBaseUrl } from "@workspace/api-client-react";
 import ProduitDetailPage from "@/pages/produit-detail";
+import MesFavorisPage from "@/pages/mes-favoris";
+import MesAvisPage from "@/pages/mes-avis";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +39,6 @@ const queryClient = new QueryClient({
 
 setAuthTokenGetter(() => localStorage.getItem("token"));
 
-
 function Router() {
   return (
     <Switch>
@@ -45,11 +46,13 @@ function Router() {
       <Route path="/etablissements" component={EtablissementsPage} />
       <Route path="/etablissements/:id" component={EtablissementDetailPage} />
       <Route path="/produits" component={ProduitsPage} />
-      <Route path="/produits/:id" component={ProduitDetailPage} /> 
+      <Route path="/produits/:id" component={ProduitDetailPage} />
       <Route path="/ajouter" component={AjouterPage} />
       <Route path="/profil" component={ProfilPage} />
       <Route path="/admin" component={AdminPage} />
       <Route path="/connexion" component={ConnexionPage} />
+      <Route path="/mes-favoris" component={MesFavorisPage} />
+      <Route path="/mes-avis" component={MesAvisPage} />
       <Route path="/inscription" component={InscriptionPage} />
       <Route component={NotFound} />
     </Switch>
@@ -84,7 +87,11 @@ function AppLayout() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Leaf className="w-5 h-5 text-primary" />
+            <img
+              src="/glutenapp2.png"
+              alt="Logo Gluten Free"
+              className="w-8 h-8 object-contain relative"
+            />
             <p className="font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               Gluten Free Spot
             </p>
