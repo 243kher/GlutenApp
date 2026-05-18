@@ -1,15 +1,28 @@
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   MessageSquare,
   Star,
   MapPin,
   AlertTriangle,
+  Trash2,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type UserReview = {
   id: number;
@@ -28,18 +41,44 @@ type UserReview = {
 };
 
 export default function MesAvisPage() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [pendingDelete, setPendingDelete] = useState<number | null>(null);
 
   const { data, isLoading } = useQuery<UserReview[]>({
     queryKey: ["me-reviews"],
     enabled: !!user,
     queryFn: async () => {
+      const token = localStorage.getItem("token");
       const res = await fetch("/api/auth/me/reviews", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Erreur chargement avis");
       return res.json();
+    },
+  });
+
+  // Mutation pour supprimer un avis
+  const deleteReview = useMutation({
+    mutationFn: async (reviewId: number) => {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/reviews/${reviewId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok && res.status !== 204) throw new Error("Erreur");
+    },
+    onSuccess: () => {
+      toast({ title: "Avis supprimé" });
+      queryClient.invalidateQueries({ queryKey: ["me-reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["me-stats-manual"] });
+      setPendingDelete(null);
+    },
+    onError: () => {
+      toast({ title: "Erreur", variant: "destructive" });
+      setPendingDelete(null);
     },
   });
 
@@ -94,10 +133,10 @@ export default function MesAvisPage() {
             Partagez votre expérience pour aider la communauté.
           </p>
           <Button
-            onClick={() => setLocation("/")}
+            onClick={() => setLocation("/etablissements")}
             className="rounded-full bg-gradient-to-r from-primary to-primary/80"
           >
-            Explorer la carte
+            Explorer les établissements
           </Button>
         </div>
       )}
@@ -108,22 +147,52 @@ export default function MesAvisPage() {
           <ReviewCard
             key={review.id}
             review={review}
-            onClick={() =>
-              setLocation(`/etablissement/${review.establishment.id}`)
+            onOpen={() =>
+              setLocation(`/etablissements/${review.establishment.id}`) // ← avec "s"
             }
+            onDelete={() => setPendingDelete(review.id)}
           />
         ))}
       </div>
+
+      {/* Dialog confirmation suppression */}
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => !open && setPendingDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cet avis ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est définitive. Votre avis sera retiré de la fiche de
+              l'établissement.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                pendingDelete && deleteReview.mutate(pendingDelete)
+              }
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
 function ReviewCard({
   review,
-  onClick,
+  onOpen,
+  onDelete,
 }: {
   review: UserReview;
-  onClick: () => void;
+  onOpen: () => void;
+  onDelete: () => void;
 }) {
   const date = new Date(review.createdAt).toLocaleDateString("fr-FR", {
     year: "numeric",
@@ -133,7 +202,7 @@ function ReviewCard({
 
   return (
     <div
-      onClick={onClick}
+      onClick={onOpen}
       className="group relative bg-card/60 backdrop-blur-xl border border-border/40 rounded-2xl p-4 cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all duration-200"
     >
       {/* Établissement (en-tête) */}
@@ -159,6 +228,17 @@ function ReviewCard({
             {review.establishment.city} · {date}
           </p>
         </div>
+        {/* Bouton supprimer */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors"
+          aria-label="Supprimer cet avis"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Note */}
